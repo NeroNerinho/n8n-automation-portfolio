@@ -98,7 +98,7 @@ lto Se você procura alguém que entende que **Segurança** e **Automação **, 
 <p align="left">
   <a href="https://www.linkedin.com/in/phillipeg-590597294"><img src="https://img.shields.io/badge/LinkedIn-Conectar-0077B5?style=for-the-badge&logo=linkedin" alt="LinkedIn"></a>
   <a href="mailto:phillipe.enterprise27@gmail.com"><img src="https://img.shields.io/badge/Email-Contato-D14836?style=for-the-badge&logo=gmail" alt="Email"></a>
----
+
 
 <p align="center">
   <i>Documentação usando Técnica Feynman — Explicando o complexo de forma simples</i>
