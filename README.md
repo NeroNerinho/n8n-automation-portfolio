@@ -93,7 +93,7 @@ Estou à disposição para detalhar tecnicamente qualquer uma dessas implementa�
 
 **Phillipe (Nero)**
 Desenvolvedor de Automações
-lto impacto. Se você procura alguém que entende que **Dados são a moeda da confiança** e **Automação é o motor da escala**, vamos nos conectar.
+lto Se você procura alguém que entende que **Segurança** e **Automação é o motor da escala**,  vamos nos conectar.
 
 <p align="left">
   <a href="https://www.linkedin.com/in/phillipeg-590597294"><img src="https://img.shields.io/badge/LinkedIn-Conectar-0077B5?style=for-the-badge&logo=linkedin" alt="LinkedIn"></a>
