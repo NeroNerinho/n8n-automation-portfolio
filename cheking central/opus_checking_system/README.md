@@ -58,14 +58,14 @@ A solução elimina a necessidade de triagem humana para arquivos.
 | 🤖 Organização automática | Sistema cria pastas e nomeia arquivos |
 | 📊 Rastreamento total | Dashboard mostra status em tempo real |
 
-### 🎪 Analogia do Circo
+### Analogia do Circo
 
 Imagine um **circo itinerante** que viaja por 50 cidades. O dono precisa provar para os patrocinadores que os banners deles apareceram em cada cidade.
 
 - **Sem sistema**: Malabarista guarda fotos no celular, palhaço perde o pendrive, mágico esquece de tirar foto
 - **Com sistema**: Cada artista acessa o portal, seleciona a cidade, e envia as provas organizadamente
 
-### 📍 O Desafio Especial: Mídia OOH (Outdoor/Frontlight)
+###  O Desafio Especial: Mídia OOH (Outdoor/Frontlight)
 
 Uma campanha pode ter **100+ endereços** diferentes. O sistema:
 1. **Busca os endereços** automaticamente do banco de dados
@@ -99,7 +99,7 @@ graph LR
     B --> F[Google Chat: Alertas em Tempo Real]
 ```
 
-### 🛠️ Stack Tecnológica:
+###  Stack Tecnológica:
 - **Frontend**: JavaScript Vanilla leve (ES6+), CSS3 com propriedades customizadas e HTML5 semântico.
 - **Orquestração**: `n8n` gerenciando lógicas complexas de roteamento para diversos meios de mídia.
 - **Camada de Dados**: 
@@ -109,26 +109,26 @@ graph LR
 
 ---
 
-## 🚀 Recursos Técnicos Avançados
+##  Recursos Técnicos Avançados
 
-### 📍 Roteamento Dinâmico OOH (Outdoor/Frontlight)
+###  Roteamento Dinâmico OOH (Outdoor/Frontlight)
 O sistema possui um módulo especializado para mídia **Extra (OOH)**. Quando uma PI de OOH é detectada:
 1. **Busca de Dados Dinâmica**: O sistema recupera os endereços exatos do banco de dados do ERP.
 2. **Geração de UI**: Cria automaticamente cards de upload individuais para *cada* endereço.
 3. **Protocolo de Prova Dupla**: Exige fotos de "Perto" e de "Longe" para conformidade total.
 4. **Ingestão Aninhada**: O n8n cria subpastas dedicadas para cada endereço dentro do diretório principal da PI.
 
-### 🧩 Lógica Consciente de Mídia
+###  Lógica Consciente de Mídia
 A interface se adapta a mais de **15 tipos de mídia** (TV, Rádio, Cinema, Digital, etc.), garantindo que metadados específicos como "Inserções Totais" ou "Marcação de Veículo" sejam capturados apenas quando relevantes.
 
-### 🛡️ Resiliência e Segurança
+###  Resiliência e Segurança
 - **Sanitização de Dados**: Filtros embutidos para limpar entradas de usuários e prevenir ataques de injeção.
 - **Motor de Progresso de Upload**: Implementação XHR customizada fornecendo feedback em tempo real para o usuário.
 - **Persistência de Estado**: Gerencia envios em múltiplas etapas (Original vs. Complemento) com rastreamento automático de status.
 
 ---
 
-## 📈 Benchmarks de Performance
+##  Benchmarks de Performance
 
 | Componente | Métrica | Desempenho |
 | :--- | :--- | :--- |
@@ -138,7 +138,7 @@ A interface se adapta a mais de **15 tipos de mídia** (TV, Rádio, Cinema, Digi
 
 ---
 
-## 🔧 Configuração Interna
+##  Configuração Interna
 
 1. **Endpoint de API**: Atualize o `API_ENDPOINT` no arquivo `script.js` para apontar para o seu webhook do n8n.
 2. **Configuração de Meios**: Estenda o objeto `MEDIA_TYPE_CONFIG` em `script.js` para adicionar novas regras de validação.
