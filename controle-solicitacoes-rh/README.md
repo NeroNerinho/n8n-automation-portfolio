@@ -1,27 +1,41 @@
-# ✅ Controle de Solicitações: Orquestração de Processos de RH
+# Controle de Solicitações - RH e Facilities
 
-![Status](https://img.shields.io/badge/Status-Ativo-blueviolet?style=for-the-badge)
-![n8n](https://img.shields.io/badge/Orchestração-n8n-FF6C37?style=for-the-badge&logo=n8n)
-![Database](https://img.shields.io/badge/Rastreabilidade-Google_Sheets-34A853?style=for-the-badge&logo=googlesheets)
-![Eficiência](https://img.shields.io/badge/Impacto-100%25_Auditável-success?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Produção-blue?style=for-the-badge)
+![Tech](https://img.shields.io/badge/Orquestrador-n8n-orange?style=for-the-badge)
 
-> **"Transformando solicitações caóticas via e-mail em um motor de aprovação organizado e de alta visibilidade."**
+## Visão Geral
+
+Este projeto organiza e automatiza as solicitações internas da empresa, como pedidos de férias, reembolso, compras de equipamentos, entre outros. Substitui o uso caótico de e-mails e planilhas por um fluxo estruturado.
+
+### O Problema
+
+Pedidos feitos por e-mail se perdiam. Ninguém sabia se o pedido tinha sido aprovado ou em que etapa estava. O RH perdia tempo cobrando gestores para aprovar.
 
 ---
 
-## 🎯 Resumo Executivo (SLA e Excelência Operacional)
+## Como Funciona (Analogia Simples)
 
-O **Controle de Solicitações de RH** é uma automação corporativa que gerencia o ciclo de vida completo de pedidos internos (Férias, Benefícios, Alterações de Cargo). Ao implementar uma arquitetura de **callback assíncrono**, o sistema elimina o "buraco negro" dos e-mails e garante que cada pedido seja rastreado, roteado e resolvido.
+### Imagine uma Cozinha de Restaurante
 
-### 🚀 Impacto Estratégico no Negócio:
-- **Aprovações 60% mais Rápidas**: O ciclo médio de aprovação caiu de **7 dias** para menos de **48 horas**.
-- **100% de Rastreabilidade**: Cada decisão (Aprovação/Rejeição) é registrada com timestamp e identificação do aprovador.
+Para que o prato chegue certo na mesa:
+1.  **O Garçom (Formulário)**: Anota o pedido exatamente como o cliente quer. Nada de "esqueci de perguntar o ponto da carne".
+2.  **O Sistema (n8n)**: Leva o pedido para a estação certa na cozinha. Se for salada, vai para a saladeira; se for carne, para a grelha.
+3.  **O Chef (Aprovador)**: Confere se está tudo certo antes de liberar.
+4.  **Entrega**: O prato chega pronto para o cliente (Solicitante), e ele é avisado.
+
+---
+
+## Detalhes Técnicos
+
+- **Entrada**: Formulários web (Typeform/Google Forms).
+- **Processamento**: O n8n recebe a resposta, identifica o tipo de pedido e envia para o aprovador correto (Gestor direto ou Diretor, dependendo do valor).
+- **Aprovação**: Feita via botões no e-mail ou Slack ("Aprovar" / "Rejeitar").
+- **Conclusão**: Atualiza a planilha de controle e avisa o funcionário.
 - **Redução de 75% na Carga do RH**: Elimina a necessidade de follow-ups manuais e entrada repetitiva de dados.
 - **Experiência do Colaborador**: Notificações em tempo real mantêm os funcionários informados em cada etapa do processo.
 
 ---
 
-## 🧠 Como Funciona (Explicação Feynman)
 
 > 💡 **Técnica Feynman**: Se você não consegue explicar algo de forma simples, você não entende bem o suficiente.
 

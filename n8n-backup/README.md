@@ -1,56 +1,48 @@
-# 💾 Sistema de Backup Automatizado para n8n
+# DR Engine - Backup e Recuperação de Desastres
 
-![Status](https://img.shields.io/badge/Status-Ativo-blueviolet?style=for-the-badge)
-![n8n](https://img.shields.io/badge/Orquestração-n8n-FF6C37?style=for-the-badge&logo=n8n)
-![Armazenamento](https://img.shields.io/badge/Cloud-Google_Drive-34A853?style=for-the-badge&logo=googledrive)
-![Segurança](https://img.shields.io/badge/Segurança-OAuth2-success?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Crítico-red?style=for-the-badge)
+![Type](https://img.shields.io/badge/Tipo-Infraestrutura-gray?style=for-the-badge)
 
-> **"Garantindo a resiliência total da infraestrutura de automação através de backups versionados e sincronizados na nuvem."**
+## Visão Geral
 
----
+O **DR Engine (Disaster Recovery)** é a "apólice de seguro" do ecossistema de automação. Ele realiza backups automáticos de todos os fluxos de trabalho (workflows) e configurações do n8n, garantindo que o sistema possa ser restaurado rapidamente em caso de falha.
 
-## 🎯 ROI e Resiliência Operacional
+### O Risco
 
-Este sistema é a base de uma infraestrutura de automação profissional. Ele transforma um ambiente vulnerável em um **ecossistema resiliente**, automatizando a preservação de todos os fluxos de trabalho do n8n.
-
-### 🚀 Impacto nos Negócios:
-- **Zero Perda de Dados**: Todos os workflows são capturados diariamente às 03:00.
-- **Recuperação Rápida (RTO)**: Reduz o tempo de recuperação de horas para **5 minutos** em caso de falha no servidor.
-- **Conformidade**: Mantém um histórico de 30 dias de todas as mudanças de lógica.
-- **Seguranca de Infraestrutura**: Zero incidentes de perda de dados desde a implementação.
+Automações complexas levam meses para serem construídas. Perder esse trabalho por uma falha de servidor ou erro humano ("deletei sem querer") é inaceitável. O DR Engine resolve isso.
 
 ---
 
-## 🧠 Como Funciona (Explicação Feynman)
+## Como Funciona (Analogia Simples)
 
-> 💡 **Técnica Feynman**: Se você não consegue explicar algo de forma simples, você não entende bem o suficiente.
+### Imagine uma Fotocopiadora Automática
 
-### Imagine Que...
+Imagine que você está escrevendo um livro importante.
+1.  Todo dia, às 3 da manhã (quando você dorme), um robô entra no seu escritório.
+2.  Ele tira uma cópia de tudo o que você escreveu até aquele momento.
+3.  Ele guarda essa cópia em um cofre à prova de fogo em outro prédio (Google Drive).
+4.  Se no dia seguinte seu computador queimar, você vai até o cofre e pega a cópia da noite anterior. Você perdeu no máximo algumas horas de trabalho, nunca o livro todo.
 
-Você é um **fotógrafo profissional** com 10.000 fotos no computador. Se o HD queimar, você perde anos de trabalho. O que você faz?
+---
 
-1. 💽 **Backup manual**: "Vou copiar pro pendrive depois..." (e nunca faz)
-2. ☁️ **Backup automático**: O computador copia sozinho para a nuvem toda noite
+## Detalhes Técnicos
 
-**Este sistema é a opção 2** — mas para workflows n8n.
+A solução utiliza a API administrativa do n8n para exportar os dados em formato JSON.
 
-### 🏠 Analogia da Casa
+1.  **Agendamento**: Executa via Cron Job diariamente.
+2.  **Extração**: Conecta na API do n8n e baixa todos os workflows.
+3.  **Versionamento**: Salva o arquivo com data/hora (ex: `backup_2023-10-27.json`).
+4.  **Armazenamento**: Envia para pasta segura no Google Drive ou repositório Git.
 
-Imagine que você construiu uma **casa inteira com LEGO**. Levou meses. Aí seu gato derruba tudo.
+### Métricas de Recuperação (RTO)
 
-| Sem Backup | Com Backup |
-|------------|------------|
-| Começa do zero | Pega as fotos de cada etapa |
-| Semanas reconstruindo | 5 minutos para voltar |
-| Provavelmente esqueceu detalhes | Exatamente igual ao original |
-
-### ⚙️ Como o Sistema Funciona
+- **Sem Backup**: Dias ou semanas para reconstruir tudo do zero.
+- **Com Backup**: < 5 Minutos para importar o arquivo JSON e restaurar o sistema.
 
 ```
 ┌────────────────────────────────────────────────────────────┐
 │ ⏰ TODO DIA ÀS 03:00 DA MANHÃ                              │
 └────────────────────────────────────────────────────────────┘
-                           │
                            ▼
 ┌────────────────────────────────────────────────────────────┐
 │ 1️⃣ LISTA: "Quais workflows existem no n8n?"               │

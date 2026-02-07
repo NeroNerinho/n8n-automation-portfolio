@@ -1,38 +1,43 @@
-# 🔔 Jira ↔ Discord: Alertas Inteligentes de Incidentes
+# Jira Bridge - Notificações de Incidente em Tempo Real
 
-![Status](https://img.shields.io/badge/Status-Ativo-blueviolet?style=for-the-badge)
-![n8n](https://img.shields.io/badge/Orquestração-n8n-FF6C37?style=for-the-badge&logo=n8n)
-![Jira](https://img.shields.io/badge/Fonte-Jira_Service_Management-0052CC?style=for-the-badge&logo=jira)
-![Discord](https://img.shields.io/badge/Destino-Discord_Webhooks-5865F2?style=for-the-badge&logo=discord)
+![Status](https://img.shields.io/badge/Status-Produção-blue?style=for-the-badge)
+![Criticity](https://img.shields.io/badge/Criticidade-Alta-red?style=for-the-badge)
 
-> **"Eliminando o atraso entre a criação do ticket e a resposta técnica com notificações ricas e em tempo real."**
+## Visão Geral
 
----
+O **Jira Bridge** é um sistema que conecta a gestão de tickets (Jira) com a comunicação da equipe (Discord/Teams). O objetivo é garantir que incidentes críticos sejam notificados instantaneamente, sem depender de e-mail.
 
-## 🎯 ROI e Eficiência em SLAs
+### O Problema
 
-Em operações de TI críticas, cada segundo conta. Este projeto automatiza a ponte entre o **Jira Service Management** e o **Discord**, transformando filas de tickets passivas em alertas proativos.
-
-### 🚀 Impacto Estratégico para o Negócio:
-- **Redução de 90% no Tempo de Resposta**: O tempo médio de resposta inicial caiu de ~30 min para **< 3 min**.
-- **Melhoria no Cumprimento de SLA**: Incidentes de alta prioridade são interceptados quase instantaneamente.
-- **Visibilidade Centralizada**: Toda a equipe técnica ganha consciência situacional simultânea via Discord.
-- **Zero Tickets Esquecidos**: A automação garante que cada incidente seja notificado no momento da abertura.
+Tickets de alta prioridade (servidor fora do ar, falha de segurança) eram abertos no Jira, mas a equipe técnica demorava para ver porque estava focada em outras tarefas e não monitorava o e-mail o tempo todo.
 
 ---
 
-## 🧠 Como Funciona (Explicação Feynman)
+## Como Funciona (Analogia Simples)
 
-> 💡 **Técnica Feynman**: Se você não consegue explicar algo de forma simples, você não entende bem o suficiente.
+### Imagine um Alarme de Incêndio
 
-### Imagine Que...
+O sistema funciona como um detector de fumaça conectado ao quartel de bombeiros:
+1.  **Detector (Jira)**: Alguém reporta um problema crítico ("Fogo!").
+2.  **Central (n8n)**: O sistema recebe o sinal e identifica onde é o fogo e quão grave é.
+3.  **Sirene (Discord)**: Toca um alarme direto no celular dos bombeiros (desenvolvedores), com o endereço exato do incêndio.
+4.  **Ação**: Eles saem para apagar o fogo em segundos, não em minutos.
 
-Você é o **chefe dos bombeiros** de uma cidade. Quando alguém liga pro 190, como você garante que os bombeiros saibam imediatamente?
+---
 
-**Opção antiga**: Um funcionário anota o chamado, caminha até o quartel, e avisa verbalmente.  
-**Opção moderna**: O sistema dispara um alarme que toca em TODOS os quartéis simultaneamente.
+## Detalhes Técnicos
 
-**Este projeto é a opção moderna** — mas para tickets de TI.
+A automação monitora Webhooks do Jira para eventos específicos (Create Issue, Update Priority).
+
+1.  **Monitoramento**: Escuta eventos do Jira em tempo real.
+2.  **Filtro**: Ignora tickets de baixa prioridade. Foca apenas em P1 (Crítico) e P2 (Alto).
+3.  **Enriquecimento**: Busca informações adicionais (quem reportou, logs anexados).
+4.  **Alerta**: Envia mensagem formatada para o canal do Discord específico do time responsável (SRE, Backend, Frontend).
+
+### Resultados
+
+- **Tempo de Resposta**: Caiu de ~30 minutos para < 2 minutos.
+- **Visibilidade**: Toda a equipe fica sabendo do problema simultaneamente.
 
 ### 🚨 Analogia do Detector de Fumaça
 

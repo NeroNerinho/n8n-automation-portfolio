@@ -1,30 +1,50 @@
-# 🛡️ Painel de Aprovações
+# Approval Panel - Gestão de Aprovações
 
-![Status](https://img.shields.io/badge/Status-Produção-blueviolet?style=for-the-badge)
-![React](https://img.shields.io/badge/Frontend-React_19-61DAFB?style=for-the-badge&logo=react)
-![TypeScript](https://img.shields.io/badge/Linguagem-TypeScript-3178C6?style=for-the-badge&logo=typescript)
-![n8n](https://img.shields.io/badge/Backend-n8n_Workflow-EA4B71?style=for-the-badge&logo=n8n)
-![BigQuery](https://img.shields.io/badge/Dados-Google_BigQuery-4285F4?style=for-the-badge&logo=google-cloud)
+![Status](https://img.shields.io/badge/Status-Produção-blue?style=for-the-badge)
+![Security](https://img.shields.io/badge/Security-RBAC_Level_3-success?style=for-the-badge)
+![Stack](https://img.shields.io/badge/Tech-React_19_+_BigQuery-61DAFB?style=for-the-badge)
 
-> **Hub de Governança e Auditoria para Fluxos de Aprovação de Mídia**
->
-> *"Um centro de comando de alta fidelidade construído para transparência absoluta e governança auditável."*
+## Visão Geral
+
+O **Approval Panel** é uma interface centralizada para governança de decisões. Ele substitui processos de aprovação manuais (e-mails, WhatsApp) por um sistema auditável e seguro.
+
+### Problema Resolvido
+
+Anteriormente, as aprovações financeiras e operacionais eram fragmentadas e difíceis de rastrear. Este painel centraliza tudo em um único lugar, garantindo que:
+1. Apenas pessoas autorizadas aprovem.
+2. Todas as ações fiquem registradas (quem, quando, o quê).
+3. O tempo de resposta diminua drasticamente.
 
 ---
 
-## 🧠 Como Funciona (Explicação Feynman)
+## Como Funciona (Analogia Simples)
 
-### Imagine Que...
+### Imagine um Cartório Digital
 
-Você trabalha em uma agência de publicidade. Todos os dias, **fornecedores externos** mandam fotos e vídeos de anúncios para você aprovar antes de irem ao ar. Antes deste sistema:
+Para entender facilmente como o sistema protege as decisões:
 
-- 📧 Tudo chegava por email — materiais se perdiam
-- ❓ Ninguém sabia quem tinha aprovado o quê
-- ⏰ Demoravam dias para achar um arquivo antigo
+1.  **Acesso Controlado**: Para entrar, o usuário precisa de uma "identidade digital" (Token JWT). Não adianta ter a chave se não for a pessoa certa.
+2.  **O Livro de Registros**: Cada clique em "Aprovar" ou "Rejeitar" é escrito em um livro que não pode ser apagado (BigQuery).
+3.  **Níveis de Poder**:
+    *   Um estagiário pode apenas "olhar" (Read-only).
+    *   Um gerente pode "assinar" (Approve).
+    *   Um diretor pode "configurar" (Admin).
 
-**Este painel é como uma central de controle de aeroporto, mas para materiais de propaganda.**
+---
 
-Assim como os controladores de voo veem todos os aviões em um painel único, os aprovadores veem todos os materiais de mídia esperando decisão — cada um com seus dados, arquivos, e histórico.
+## Arquitetura Técnica
+
+O sistema segue o padrão **BFF (Backend for Frontend)**, onde o n8n atua como middleware inteligente.
+
+1.  **Frontend (React)**: O usuário interage com a interface.
+2.  **API Gateway (n8n)**: Recebe a solicitação, valida o token de segurança e processa a lógica.
+3.  **Dados (BigQuery)**: Armazena o histórico auditável.
+
+### Stack
+
+- **Frontend**: React 19, Tailwind CSS.
+- **Backend/Orquestração**: n8n.
+- **Banco de Dados**: Google BigQuery (Audit Logs).
 
 ---
 
@@ -32,19 +52,19 @@ Assim como os controladores de voo veem todos os aviões em um painel único, os
 
 ```
                     ┌─────────────────┐
-                    │  📤 FORNECEDOR  │
+                    │    FORNECEDOR   │
                     │ envia materiais │
                     └────────┬────────┘
                              │
                              ▼
          ┌───────────────────────────────────────┐
-         │       🌐 CENTRAL DE CHECKING          │
+         │          CENTRAL DE CHECKING          │
          │   (formulário de upload externo)      │
          └───────────────────┬───────────────────┘
                              │
                              ▼
    ┌─────────────────────────────────────────────────────┐
-   │              🤖 n8n WORKFLOW                        │
+   │                 n8n WORKFLOW                        │
    │  ┌──────────────────────────────────────────────┐   │
    │  │  1. Recebe os arquivos via webhook           │   │
    │  │  2. Salva no Google Drive automaticamente    │   │
@@ -54,7 +74,7 @@ Assim como os controladores de voo veem todos os aviões em um painel único, os
                              │
                              ▼
               ┌──────────────────────────┐
-              │   📊 PAINEL DE APROVAÇÃO │
+              │     PAINEL DE APROVAÇÃO  │
               │   (este projeto React)   │
               └────────────┬─────────────┘
                            │
@@ -62,7 +82,7 @@ Assim como os controladores de voo veem todos os aviões em um painel único, os
             │                             │
             ▼                             ▼
    ┌─────────────────┐          ┌─────────────────┐
-   │   ✅ APROVAR    │          │   ❌ REPROVAR   │
+   │      APROVAR    │         │    REPROVAR      │
    │                 │          │                 │
    │ • Atualiza BD   │          │ • Atualiza BD   │
    │ • Fim do fluxo  │          │ • Cria pasta    │

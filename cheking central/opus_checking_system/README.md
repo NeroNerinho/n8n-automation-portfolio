@@ -1,35 +1,48 @@
-# 📋 Sistema de Checking: Portal de Validação de Mídia
+# Central de Checking - Validação de Mídia
 
-![Status](https://img.shields.io/badge/Status-Ativo-blueviolet?style=for-the-badge)
-![n8n](https://img.shields.io/badge/Backend-n8n-FF6C37?style=for-the-badge&logo=n8n)
-![Stack](https://img.shields.io/badge/Stack-Vanilla_JS-F7DF1E?style=for-the-badge&logo=javascript)
-![Banco_de_Dados](https://img.shields.io/badge/Dados-MySQL_%26_BigQuery-4479A1?style=for-the-badge&logo=mysql)
+![Status](https://img.shields.io/badge/Status-Produção-blue?style=for-the-badge)
+![Tech](https://img.shields.io/badge/Tecnologia-n8n_|_Drive_API-blueviolet?style=for-the-badge)
 
-> **"Um sistema de precisão para comprovação de veiculação em campanhas publicitárias de alto impacto."**
+## Visão Geral
 
----
-
-## 🎯 ROI e Impacto Estratégico
-
-O **Sistema de Checking** otimiza a etapa crítica da publicidade: a **Comprovação de Veiculação**. Ao automatizar a coleta, validação e armazenamento de provas, este sistema alcança:
-- **Redução de 90% na Triagem Manual**: A organização automática no Drive elimina horas de gestão de arquivos.
-- **Precisão Elevada**: Geração dinâmica de campos que evita envios incorretos ou incompletos.
-- **Auditoria Transparente**: Integração em tempo real com BigQuery garante transparência total para clientes e auditores.
+A **Central de Checking** resolve o caos logístico de receber milhares de fotos de campanhas publicitárias (Out-of-Home). É um portal onde exibidores enviam comprovantes de veiculação, e o sistema organiza tudo automaticamente.
 
 ---
 
-## 🧠 Como Funciona (Explicação Feynman)
+## Como Funciona (Analogia Simples)
 
-> 💡 **Técnica Feynman**: Se você não consegue explicar algo de forma simples, você não entende bem o suficiente.
+### Imagine um Arquivista Automático
 
-### Imagine Que...
+Antes, uma pessoa precisava:
+1.  Receber 500 fotos no WhatsApp.
+2.  Abrir uma por uma.
+3.  Descobrir de qual cidade e campanha era.
+4.  Renomear o arquivo ("foto_sp_campanha_x.jpg").
+5.  Salvar na pasta correta no Google Drive.
 
-Você trabalha numa **agência de publicidade** e precisa provar para seus clientes que os anúncios realmente foram veiculados. É como se você fosse um **detetive de propaganda**:
+**O Sistema faz isso em 2 segundos:**
+1.  O exibidor entra no site e diz "Sou de SP, Campanha X".
+2.  Ele solta as fotos.
+3.  O "robô" pega cada foto, renomeia com o padrão correto e guarda na pasta certa na nuvem.
+4.  Se a foto estiver corrompida, ele avisa na hora.
 
-1. 📺 **O cliente compra anúncios** (TV, outdoor, rádio, digital)
-2. 📸 **Fornecedores tiram fotos/vídeos** provando que veicularam
-3. 📤 **Enviam as provas** para a agência
-4. ✅ **A agência valida** e guarda como evidência
+---
+
+## Detalhes Técnicos
+
+A solução elimina a necessidade de triagem humana para arquivos.
+
+1.  **Ingestão**: Interface Web simples para upload.
+2.  **Processamento (n8n)**:
+    - Recebe os arquivos.
+    - Aplica regras de taxonomia (Nome do Cliente + Data + Local).
+    - Cria a estrutura de pastas no Google Drive (Ano > Mês > Campanha) se não existir.
+3.  **Resultado**: Organização perfeita e imediata.
+
+### Ganhos
+
+- **Tempo**: De dias para segundos.
+- **Erro Humano**: Reduzido a zero (não há chance de salvar na pasta errada).
 
 **Antes deste sistema:**
 | Problema | Como era |

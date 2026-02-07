@@ -1,59 +1,46 @@
-# 🤖 RAVENA - Assistente de RH Inteligente (RAG & Webhook)
+# RAVENA - Assistente de RH Inteligente (RAG)
 
-![Status](https://img.shields.io/badge/Status-Ativo-blueviolet?style=for-the-badge)
-![n8n](https://img.shields.io/badge/Orquestração-n8n-FF6C37?style=for-the-badge&logo=n8n)
-![IA](https://img.shields.io/badge/LLM-Gemini_1.5_Flash-4285F4?style=for-the-badge&logo=google-gemini)
-![VectorDB](https://img.shields.io/badge/VectorDB-Pinecone-000000?style=for-the-badge&logo=pinecone)
+![Status](https://img.shields.io/badge/Status-Produção-blue?style=for-the-badge)
+![AI](https://img.shields.io/badge/AI-Gemini_1.5_Pro-orange?style=for-the-badge)
+![Vector](https://img.shields.io/badge/Vector_DB-Pinecone-green?style=for-the-badge)
 
-> **"Transformando manuais estáticos de RH em uma central de conhecimento dinâmica e inteligente."**
+## Visão Geral
 
----
+A **RAVENA** é um chatbot de Inteligência Artificial que reduz a carga operacional do departamento de RH. Ela utiliza a tecnologia RAG (Retrieval-Augmented Generation) para ler manuais e responder perguntas dos funcionários com base na documentação oficial.
 
-## 🎯 Resumo Executivo (ROI e Valor de Negócio)
+### O Problema
 
-A RAVENA não é apenas um chatbot; é um sistema de **Geração Aumentada por Recuperação (RAG)** projetado para eliminar gargalos no RH. Ao centralizar o conhecimento de manuais em PDF e planilhas, a RAVENA reduz o volume de tickets internos de RH em cerca de **65%**, fornecendo suporte instantâneo sobre políticas, benefícios e procedimentos.
-
-### 🚀 Principais Transformações:
-- **Suporte sem Latência**: Fim da espera por respostas de e-mail do RH.
-- **Precisão Contextual**: A busca semântica garante que as respostas sejam baseadas *estritamente* nos manuais oficiais da empresa.
-- **Conformidade Ativa**: Registro em tempo real de todas as interações para auditoria e análise de tendências.
+O RH passava 60% do tempo respondendo perguntas recorrentes e simples, como:
+- "Como acesso meu holerite?"
+- "Qual o valor do vale alimentação?"
+- "Como funciona o plano de saúde?"
 
 ---
 
-## 🧠 Como Funciona (Explicação Feynman)
+## Como Funciona (Analogia Simples)
 
-> 💡 **Técnica Feynman**: Se você não consegue explicar algo de forma simples, você não entende bem o suficiente.
+### Imagine uma Bibliotecária
 
-### Imagine Que...
+Imagine que a empresa tem uma biblioteca com todas as regras e políticas.
+- **Sem RAVENA**: O funcionário entra, fica perdido procurando o livro certo, ou pergunta para a bibliotecária (que está ocupada).
+- **Com RAVENA**: A bibliotecária leu e decorou todos os livros. Quando você faz uma pergunta, ela busca na memória e te dá a resposta exata, na hora, citando a fonte.
 
-Você tem uma **bibliotecária superinteligente** que leu TODOS os manuais da empresa e memoriza cada detalhe. Quando um funcionário pergunta algo sobre RH, ela:
+---
 
-1. 🔍 **Entende a pergunta** (mesmo se mal formulada)
-2. 📚 **Consulta mentalmente** os manuais relevantes
-3. 💬 **Responde com suas palavras** (não copia/cola)
-4. 📝 **Anota a conversa** para consulta futura
+## Detalhes Técnicos (RAG)
 
-**Isso é a RAVENA** — uma IA que "leu" todos os documentos de RH e responde como uma especialista.
+O sistema não "alucina" respostas, pois ele é obrigado a consultar a base de conhecimento antes de responder.
 
-### 🧩 O Que é RAG? (Explicação Simples)
+1.  **Ingestão**: Documentos (PDFs) são transformados em vetores numéricos e salvos no Pinecone.
+2.  **Busca**: Quando o usuário pergunta, o sistema busca os parágrafos mais parecidos no banco vetorial.
+3.  **Resposta**: O Google Gemini recebe a pergunta + os parágrafos encontrados e formula a resposta.
 
-**RAG = Retrieval-Augmented Generation**
+### Stack Tecnológico
 
-| Termo | Significado | Analogia |
-|-------|-------------|----------|
-| **Retrieval** | Recuperação | Bibliotecária busca o livro certo |
-| **Augmented** | Aumentada | Ela lê o trecho relevante |
-| **Generation** | Geração | Ela explica com suas palavras |
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│ PERGUNTA: "Quantos dias de férias eu tenho direito?"        │
-└─────────────────────────────────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 1️⃣ RETRIEVAL: Busca no Pinecone                            │
-│    "Encontrei 3 trechos sobre férias no manual..."          │
+- **Orquestração**: n8n.
+- **LLM**: Google Gemini 1.5 Pro.
+- **Banco Vetorial**: Pinecone.
+- **Frontend**: WhatsApp/Teams.
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
