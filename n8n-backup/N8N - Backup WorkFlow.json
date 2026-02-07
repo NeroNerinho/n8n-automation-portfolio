@@ -1,0 +1,900 @@
+{
+  "name": "N8N - Backup WorkFlow",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "options": {
+          "fileName": "={{ $json.name }}-{{ $json.active === false ? 'inactive' : $json.active === true ? 'active' : 'unknown' }}",
+          "useRawData": true
+        }
+      },
+      "id": "a0abe79e-9f3f-40d0-b306-b633403ff886",
+      "name": "Move Binary Data",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "position": [
+        -704,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "98415e9e-5354-4223-9107-ef3ade30c2f0",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $node[\"GET CURRENT FOLDER\"].json.name }}",
+              "rightValue": "n8n_backups"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "199a7a94-5304-4d8d-8382-5e887530dcc8",
+      "name": "IGNORE FILES",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        -1264,
+        80
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "n8n_backups",
+        "driveId": {
+          "__rl": true,
+          "value": "0ALp_xeSsYzrCUk9PVA",
+          "mode": "list",
+          "cachedResultName": "[INT] GOM TAS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/0ALp_xeSsYzrCUk9PVA"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1dx4lt378OaljWrsZlKxWA9nG9kSKM6v8",
+          "mode": "list",
+          "cachedResultName": "N8N-BKP",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1dx4lt378OaljWrsZlKxWA9nG9kSKM6v8"
+        },
+        "options": {}
+      },
+      "id": "a4716e49-afce-498d-9efd-ee0d4c2440cf",
+      "name": "Create n8n_backups",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -1712,
+        384
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "n8n_old",
+        "driveId": {
+          "__rl": true,
+          "value": "0ALp_xeSsYzrCUk9PVA",
+          "mode": "list",
+          "cachedResultName": "[INT] GOM TAS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/0ALp_xeSsYzrCUk9PVA"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1dx4lt378OaljWrsZlKxWA9nG9kSKM6v8",
+          "mode": "list",
+          "cachedResultName": "N8N-BKP",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1dx4lt378OaljWrsZlKxWA9nG9kSKM6v8"
+        },
+        "options": {}
+      },
+      "id": "af94125e-f09c-44c5-a94e-8f2f5c21b00d",
+      "name": "Create n8n_old",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -1712,
+        544
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "driveId": {
+            "__rl": true,
+            "value": "0ALp_xeSsYzrCUk9PVA",
+            "mode": "list",
+            "cachedResultName": "[INT] GOM TAS",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/0ALp_xeSsYzrCUk9PVA"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1dx4lt378OaljWrsZlKxWA9nG9kSKM6v8",
+            "mode": "list",
+            "cachedResultName": "N8N-BKP",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1dx4lt378OaljWrsZlKxWA9nG9kSKM6v8"
+          }
+        },
+        "options": {}
+      },
+      "id": "1f14fe6d-cc50-4293-af5d-7404405de1db",
+      "name": "GET CURRENT FOLDER",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -2384,
+        288
+      ],
+      "executeOnce": true,
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "typeVersion": 3,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst requiredNames = [\"n8n_old\", \"n8n_backups\"];\n\n// Filtrar los nombres de la entrada\nconst folderNames = items.map(item => item.json.name);\n\n// Encontrar los nombres que faltan\nconst missingNames = requiredNames.filter(name => !folderNames.includes(name));\n\nif (missingNames.length === 0) {\n  return [{ json: { message: \"ok\" } }];\n} else {\n  return [{ json: { message: `Faltan los siguientes: ${missingNames.join(', ')}` } }];\n}\n"
+      },
+      "id": "ae189537-851e-44ff-8015-c9bcfe3e2299",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -2208,
+        288
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "43bd468e-1018-4b45-9448-c51835ed65bc",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              },
+              "leftValue": "={{ $json.message }}",
+              "rightValue": "n8n_old"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1f8868fb-dcda-466c-9050-820b912ca687",
+      "name": "If n8n_old",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -2032,
+        400
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "43bd468e-1018-4b45-9448-c51835ed65bc",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              },
+              "leftValue": "={{ $json.message }}",
+              "rightValue": "n8n_backups"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1851dbfb-eea0-4caa-aab5-1b9f6fb6b168",
+      "name": "If1 n8n_backups",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -2032,
+        160
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "driveId": {
+            "__rl": true,
+            "value": "0ALp_xeSsYzrCUk9PVA",
+            "mode": "list",
+            "cachedResultName": "[INT] GOM TAS",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/0ALp_xeSsYzrCUk9PVA"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1dx4lt378OaljWrsZlKxWA9nG9kSKM6v8",
+            "mode": "list",
+            "cachedResultName": "N8N-BKP",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1dx4lt378OaljWrsZlKxWA9nG9kSKM6v8"
+          }
+        },
+        "options": {}
+      },
+      "id": "b9fac078-5454-4b06-bba6-76ea545e4b27",
+      "name": "GET CURRENT FOLDER CREATES",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -1616,
+        80
+      ],
+      "executeOnce": true,
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "typeVersion": 3,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "df713903-0f60-41f8-bc1f-9188a33d06f1",
+      "name": "Merge mensage",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        -1792,
+        80
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": ".json",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $json.id }}"
+          }
+        },
+        "options": {
+          "fields": [
+            "name",
+            "id"
+          ]
+        }
+      },
+      "id": "f3e1f143-dcc3-4b3a-95b1-2e9a5aef8173",
+      "name": "GET CURRENT BACKUPS1",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -912,
+        48
+      ],
+      "typeVersion": 3,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "LkRL3cAio7VnGTcu",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "driveId": {
+          "__rl": true,
+          "value": "=1iktX787I9FpE6ME3FYh5_KUd3iTbFZky?hl",
+          "mode": "id"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        }
+      },
+      "id": "5a34dea6-2227-4e64-82c7-c49a7a688ea9",
+      "name": "MOVE INTO OLD FOLDER",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -224,
+        16
+      ],
+      "typeVersion": 3,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "binaryData": true,
+        "name": "={{ $('Split In Batches').item.binary.data.fileName }}-{{ $node[\"n8n\"].json[\"updatedAt\"] }}.json\n\n",
+        "parents": [
+          "={{ $('IGNORE FILES').item.json.id }}"
+        ],
+        "options": {}
+      },
+      "id": "338ff5bc-ad74-43e3-8b31-4aeef5c79026",
+      "name": "UPLOAD WORKFLOWS",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -224,
+        304
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "id",
+        "options": {}
+      },
+      "id": "96908ea4-9429-4f6c-9c33-1faac6c27872",
+      "name": "Item Lists",
+      "type": "n8n-nodes-base.itemLists",
+      "position": [
+        -704,
+        48
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "753d4497-3455-4bc2-bbff-fde04d59969c",
+      "name": "Split In Batches2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        -496,
+        48
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "42716722-ae98-4e92-88d6-7bea1ac86f9e",
+      "name": "Split In Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        -496,
+        320
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "returnAll": false,
+        "filters": {},
+        "requestOptions": {}
+      },
+      "id": "30bad154-28c7-4e75-9a81-464061617700",
+      "name": "n8n",
+      "type": "n8n-nodes-base.n8n",
+      "position": [
+        -912,
+        320
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "n8nApi": {
+          "id": "",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": ".json",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1nBKCm8L156go4sVuhQQ8tHDXkz0CkFlW",
+            "mode": "list",
+            "cachedResultName": "n8n_backups",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1nBKCm8L156go4sVuhQQ8tHDXkz0CkFlW"
+          }
+        },
+        "options": {
+          "fields": [
+            "name",
+            "id"
+          ]
+        }
+      },
+      "id": "4181608e-f5e3-47f7-8a18-45aa9f12aefc",
+      "name": "LIST OLD BACKUPS",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -752,
+        576
+      ],
+      "typeVersion": 3,
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteFile",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {
+          "deletePermanently": true
+        }
+      },
+      "id": "5224047e-8398-47a4-8e2b-7fd2829be67d",
+      "name": "DELETE OLD BACKUP",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -144,
+        544
+      ],
+      "typeVersion": 3,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "id",
+        "options": {}
+      },
+      "id": "15812619-05a9-4223-8e1f-4bb080752928",
+      "name": "Item Lists old",
+      "type": "n8n-nodes-base.itemLists",
+      "position": [
+        -544,
+        576
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "42ba14aa-1eba-4fa0-a46c-e85b12ae2ac2",
+      "name": "Split In Batches old",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        -352,
+        576
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "id": "341de8fa-6ce0-4870-8adf-a1071a148146",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -2384,
+        64
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 60
+            }
+          ]
+        }
+      },
+      "id": "10aa5bdd-83d0-4570-80a0-b816a358cd1f",
+      "name": "Schedule Trigger1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -944,
+        576
+      ],
+      "typeVersion": 1.1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Move Binary Data": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IGNORE FILES": {
+      "main": [
+        [
+          {
+            "node": "GET CURRENT BACKUPS1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "n8n",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create n8n_backups": {
+      "main": [
+        [
+          {
+            "node": "GET CURRENT FOLDER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create n8n_old": {
+      "main": [
+        [
+          {
+            "node": "GET CURRENT FOLDER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET CURRENT FOLDER": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If n8n_old",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If1 n8n_backups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If n8n_old": {
+      "main": [
+        [
+          {
+            "node": "Create n8n_old",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge mensage",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "If1 n8n_backups": {
+      "main": [
+        [
+          {
+            "node": "Create n8n_backups",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge mensage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET CURRENT FOLDER CREATES": {
+      "main": [
+        [
+          {
+            "node": "IGNORE FILES",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge mensage": {
+      "main": [
+        [
+          {
+            "node": "GET CURRENT FOLDER CREATES",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET CURRENT BACKUPS1": {
+      "main": [
+        [
+          {
+            "node": "Item Lists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MOVE INTO OLD FOLDER": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UPLOAD WORKFLOWS": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item Lists": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches2": {
+      "main": [
+        [
+          {
+            "node": "MOVE INTO OLD FOLDER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches": {
+      "main": [
+        [
+          {
+            "node": "UPLOAD WORKFLOWS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n": {
+      "main": [
+        [
+          {
+            "node": "Move Binary Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LIST OLD BACKUPS": {
+      "main": [
+        [
+          {
+            "node": "Item Lists old",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DELETE OLD BACKUP": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches old",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item Lists old": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches old",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches old": {
+      "main": [
+        [
+          {
+            "node": "DELETE OLD BACKUP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "GET CURRENT FOLDER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "LIST OLD BACKUPS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "236b9cc1-66e5-400c-8bab-58cae5431643",
+  "meta": {
+    "instanceId": "6b93d26d78f3422a2df7daf09364ceee25a1cd3223a663b1fe4533d415237602"
+  },
+  "id": "CBkW73cvzDOkzwFb",
+  "tags": [
+    {
+      "updatedAt": "2025-11-13T10:28:59.210Z",
+      "createdAt": "2025-11-13T10:28:59.210Z",
+      "id": "9MUPjQ9DCi0yaf3O",
+      "name": "PROD"
+    }
+  ]
+}

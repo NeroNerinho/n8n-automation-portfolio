@@ -1,0 +1,929 @@
+{
+  "name": "Jira  - Notificação Discord",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 2
+            }
+          ]
+        }
+      },
+      "id": "03a2bb1b-ba09-4764-8dfc-1575056399a7",
+      "name": "A cada 2 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "options": {}
+      },
+      "id": "c3b86c01-c4ed-4fb9-b8c4-f3c237515b2f",
+      "name": "Buscar Tickets Jira",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        96
+      ],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "",
+          "name": "Jira Service Management Cloud API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst agora = Date.now();\nconst tresMin = 3 * 60 * 1000;\n\nconst resultado = [];\n\nfor (const item of items) {\n  const issue = item.json;\n  const created = new Date(issue.fields.created).getTime();\n  const labels = issue.fields?.labels || [];\n\n  const jaNotificado = labels.includes('notificado_discord');\n  const dentroDoTempo = (agora - created) <= tresMin;\n\n  if (!jaNotificado && dentroDoTempo) {\n    resultado.push(item);\n  }\n}\n\nreturn resultado;\n"
+      },
+      "id": "11230ed7-b14e-4dab-a767-48f235f3ddb1",
+      "name": "Filtrar por Tempo e Label",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2873debd-2a7b-4250-bc0d-42cc8138128c",
+      "name": "Loop Tickets",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        448,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const issue = $input.first().json;\n\nconst truncate = (str, maxLen) => {\n  if (!str) return 'Nao informado';\n  const clean = String(str).trim();\n  return clean.length > maxLen ? clean.substring(0, maxLen) + '...' : clean;\n};\n\n// Extrair categoria da descricao\nconst extrairCategoria = (descricao) => {\n  if (!descricao) return 'Nao informada';\n  const match = descricao.match(/Categoria:\\s*([^\\n]+)/i);\n  return match ? match[1].trim() : 'Nao informada';\n};\n\nconst descricaoCompleta = issue.fields?.description || '';\n\nconst ticket = {\n  key: issue.key || 'N/A',\n  url: `https://teste.atlassian.net/browse/${issue.key}`,\n  summary: truncate(issue.fields?.summary, 200),\n  description: truncate(descricaoCompleta, 1500),\n  priority: issue.fields?.priority?.name || 'Normal',\n  issueType: issue.fields?.issuetype?.name || 'Chamado',\n  reporter: issue.fields?.reporter?.displayName || 'Anonimo',\n  empresa: issue.fields?.customfield_10079?.value || 'Nao informada',\n  setor: issue.fields?.customfield_10078?.value || 'Nao informado',\n  categoria: extrairCategoria(descricaoCompleta),\n  created: new Date(issue.fields?.created || Date.now()).toLocaleString('pt-BR', { \n    timeZone: 'America/Sao_Paulo',\n    dateStyle: 'short',\n    timeStyle: 'medium'\n  })\n};\n\nconst priorityIcons = {\n  'Highest': '[URGENTE]',\n  'High': '[ALTA]',\n  'Medium': '[MEDIA]',\n  'Low': '[BAIXA]',\n  'Lowest': '[MINIMA]'\n};\nticket.priorityIcon = priorityIcons[ticket.priority] || '[NORMAL]';\n\nreturn { json: ticket };"
+      },
+      "id": "e9cb7c8a-419d-4fd0-9494-4b98fbac9adb",
+      "name": "Preparar Dados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "695330333943660546",
+          "mode": "list",
+          "cachedResultName": "TAS - teste"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1420561187896299712",
+          "mode": "list",
+          "cachedResultName": "n8n"
+        },
+        "content": "=**NOVO CHAMADO ABERTO**\n\n**Link:** {{ $json.url }}\n**Chamado:** `{{ $json.key }}`\n**Titulo:** {{ $json.summary }}\n**Solicitante:** {{ $json.reporter }}\n**{{ $json.priorityIcon }} Prioridade:** {{ $json.priority }}\n**Empresa:** {{ $json.empresa }}\n**Setor:** {{ $json.setor }}\n**Tipo:** {{ $json.issueType }}\n**Categoria:** {{ $json.categoria }}\n\n**Descricao:**\n```\n{{ $json.description }}\n```\n\nCriado em: {{ $json.created }}",
+        "options": {}
+      },
+      "id": "9c632345-b754-4725-9376-3d7521ce195c",
+      "name": "Notificar Discord",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        928,
+        96
+      ],
+      "webhookId": "1c59fa1a-2c8d-4cf0-9af4-ecef44bdacfb",
+      "credentials": {
+        "discordOAuth2Api": {
+          "id": "",
+          "name": "Discord account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "issueKey": "={{ $('Preparar Dados').item.json.key }}\n",
+        "updateFields": {
+          "labels": [
+            "notificado_discord"
+          ]
+        }
+      },
+      "id": "c1470f30-7a9e-4e10-92d6-9654dd569a5e",
+      "name": "Adicionar Label",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        96
+      ],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "",
+          "name": "Jira Service Management Cloud API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "SCHEDULE - A CADA 2 MINUTOS\n\nComo funciona:\nExecuta automaticamente a cada 2 minutos para buscar tickets novos\n\nPor que 2 minutos?\n- Rapido o suficiente\n- Nao sobrecarrega o sistema\n- Atraso maximo aceitavel\n\nAtencao:\nNa PRIMEIRA execucao, pode pegar tickets dos ultimos 3 minutos.\nDepois disso, so pega NOVOS",
+        "height": 400,
+        "width": 380,
+        "color": 4
+      },
+      "id": "ca481293-e84d-4b37-9f46-8157d8a989a7",
+      "name": "Sticky Note - Schedule",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -848,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "BUSCAR TICKETS DO JIRA\n\nConfiguracao:\n- Operation: getAll\n- Sem filtros JQL\n- Busca padrao\n\nO que faz:\n- Busca todos os tickets disponiveis\n- Retorna array completo de tickets\n\nAtencao:\nNAO filtra por tempo aqui!\nA filtragem acontece no PROXIMO no\n\nResultado:\nArray com todos os tickets para processar",
+        "height": 400,
+        "width": 380,
+        "color": 5
+      },
+      "id": "edd47152-8823-427c-829c-8af43f95a1ac",
+      "name": "Sticky Note - Buscar",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "FILTRAR POR TEMPO E LABEL\n\nCRITICO - Evita duplicatas\n\nDuas verificacoes em cada ticket:\n\n1. TEMPO: Criado nos ultimos 3min?\n   - Calcula: agora - created <= 3min\n   - Se NAO -> IGNORA\n\n2. LABEL: Ja foi notificado?\n   - TEM 'notificado_discord'? -> IGNORA\n   - NAO tem? -> PASSA\n\nPor que 3 minutos?\nSchedule roda a cada 2min, mas verifica 3min como margem de seguranca\n\nResultado:\nRetorna apenas tickets NOVOS e NAO NOTIFICADOS\n\nSe retornar vazio = Workflow para",
+        "height": 496,
+        "width": 380,
+        "color": 6
+      },
+      "id": "29109dff-0b82-43da-a15d-0d844d16b295",
+      "name": "Sticky Note - Filtrar",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "LOOP - PROCESSAR UM POR VEZ\n\nComo funciona o Loop:\nO no Split In Batches divide um array em lotes e processa cada lote separadamente\n\nConfiguracao:\n- Batch Size: 1 (processa 1 ticket por vez)\n- Reset: desabilitado (nao reinicia entre execucoes)\n\nFluxo do Loop:\n1. Recebe array: [Ticket1, Ticket2, Ticket3]\n2. Pega primeiro (Ticket1) -> Saida 1\n3. Processa: Prepara -> Discord -> Label\n4. Volta para o Loop -> Saida 2 (loop continua)\n5. Pega proximo (Ticket2) -> Saida 1\n6. Repete ate acabar\n7. Quando acabar, workflow termina\n\nPor que usar Loop?\n- Discord: 1 mensagem por vez\n- Jira: 1 label por request\n- Evita rate limit\n- Melhor controle de erros",
+        "height": 496,
+        "width": 380,
+        "color": 5
+      },
+      "id": "498bf4a0-8765-467f-b6d4-20849b37cdd9",
+      "name": "Sticky Note - Loop",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        416,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "PREPARAR DADOS\n\nNormalizacao:\n1. Limita caracteres (Discord max: 2000)\n2. Adiciona icones de prioridade\n3. Formata data PT-BR\n4. Constroi URL do ticket\n5. Trata campos vazios\n6. Extrai Categoria da descricao\n\nCampos customizados:\n- Empresa (customfield_10079)\n- Setor (customfield_10078)\n- Categoria (extraida da descricao via regex)\n\nExtracao de Categoria:\nBusca padrao 'Categoria: Texto' na descricao\n\nSaida:\nObjeto limpo e formatado pronto para Discord",
+        "height": 400,
+        "width": 380,
+        "color": 5
+      },
+      "id": "9043f8a1-a6b8-4a9b-9337-1c1af0653674",
+      "name": "Sticky Note - Preparar",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        832,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "ENVIAR PARA DISCORD\n\nConfiguracao:\n- Servidor: TAS - teste\n- Canal: #n8n\n- Auth: OAuth2\n\nMensagem:\n- Formatada com Markdown\n- Link clicavel\n- Informacoes completas\n\nSe falhar:\nLabel nao sera adicionada e ticket sera processado novamente na proxima execucao\n\nSe sucesso:\nAvanca para adicionar label",
+        "height": 400,
+        "width": 380,
+        "color": 6
+      },
+      "id": "de1d75cb-e5d4-405a-b62c-a090a638ce94",
+      "name": "Sticky Note - Discord",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "ADICIONAR LABEL\n\nCRITICO - Evita duplicatas\n\nCORRECAO APLICADA:\nUsa referencia absoluta ao no Preparar Dados\nissueKey = $('Preparar Dados').item.json.key\n\nO que faz:\nAdiciona label notificado_discord no ticket do Jira\n\nPor que e essencial:\nNa proxima execucao do Schedule, o filtro vai IGNORAR este ticket pois ele ja tem a label\n\nResultado:\nCada ticket e notificado APENAS UMA VEZ",
+        "height": 448,
+        "width": 380,
+        "color": 3
+      },
+      "id": "19eec25b-a7d9-4eb3-8a65-1e204ec109f4",
+      "name": "Sticky Note - Label",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 2
+            }
+          ]
+        }
+      },
+      "id": "5f9d2840-fd7e-4823-a441-cf56ebd21cf6",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2464,
+        1312
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "options": {}
+      },
+      "id": "17b1c694-9ece-4054-ac2f-58807525dcaa",
+      "name": "Fetch Jira Tickets",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        -2224,
+        1312
+      ],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "",
+          "name": "Jira Service Management Cloud API"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst agora = Date.now();\nconst JANELA_TEMPO = 2.5 * 60 * 1000;\nconst LABEL_PROCESSADO = 'notificado_discord';\n\nconst resultado = items.filter(item => {\n  const issue = item.json;\n  if (!issue?.fields?.created) {\n    console.warn('Ticket sem data de criacao:', issue?.key);\n    return false;\n  }\n  const created = new Date(issue.fields.created).getTime();\n  const labels = issue.fields?.labels || [];\n  const naoProcessado = !labels.includes(LABEL_PROCESSADO);\n  const dentroJanela = (agora - created) <= JANELA_TEMPO;\n  return naoProcessado && dentroJanela;\n});\n\nconsole.log(`Tickets filtrados: ${resultado.length} de ${items.length}`);\nreturn resultado;"
+      },
+      "id": "31f22fb6-5d3b-43c3-a1cd-fa29999f0daf",
+      "name": "Smart Filter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1984,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "08887111-e756-4dba-b3a0-cf6bb8f05830",
+      "name": "Batch Processor",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1744,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const issue = $input.first().json;\nconst safe = (val, def = 'Nao informado') => {\n  if (!val) return def;\n  const str = String(val).trim();\n  return str || def;\n};\nconst truncate = (text, limit) => {\n  if (!text) return 'Nao informado';\n  const clean = String(text).trim();\n  return clean.length > limit ? clean.substring(0, limit) + '...' : clean;\n};\nconst extractField = (desc, field) => {\n  if (!desc) return null;\n  const regex = new RegExp(`${field}:\\\\s*([^\\\\n]+)`, 'i');\n  const match = desc.match(regex);\n  return match ? match[1].trim() : null;\n};\nconst calculateUrgency = (priority, issueType) => {\n  const urgencyMap = {\n    'Highest': 'Critica',\n    'High': 'Alta',\n    'Medium': 'Media',\n    'Low': 'Baixa',\n    'Lowest': 'Minima'\n  };\n  if (issueType?.toLowerCase().includes('incident')) {\n    return 'Critica';\n  }\n  return urgencyMap[priority] || 'Media';\n};\nconst calculateSLA = (priority, urgency) => {\n  if (urgency === 'Critica') return '30min';\n  if (priority === 'Highest' || priority === 'High') return '1-2h';\n  if (priority === 'Medium') return '4h';\n  return '8h';\n};\nconst fields = issue.fields || {};\nconst description = fields.description || '';\nconst priority = fields.priority?.name || 'Normal';\nconst issueType = fields.issuetype?.name || 'Chamado';\nconst classifyArea = (desc, summary) => {\n  const text = (desc + ' ' + summary).toLowerCase();\n  if (text.includes('servidor') || text.includes('infraestrutura')) return 'Infraestrutura';\n  if (text.includes('rede') || text.includes('internet') || text.includes('wifi')) return 'Rede';\n  if (text.includes('software') || text.includes('aplicativo') || text.includes('sistema')) return 'Software';\n  if (text.includes('hardware') || text.includes('computador') || text.includes('impressora')) return 'Hardware';\n  if (text.includes('acesso') || text.includes('senha') || text.includes('login')) return 'Acesso';\n  return 'Geral';\n};\nconst ticketData = {\n  key: issue.key || 'N/A',\n  url: `https://teste.atlassian.net/browse/${issue.key}`,\n  titulo: safe(fields.summary),\n  descricao: truncate(description, 1500),\n  descricaoCompleta: description,\n  prioridade: priority,\n  urgenciaCalculada: calculateUrgency(priority, issueType),\n  slaCalculado: calculateSLA(priority, calculateUrgency(priority, issueType)),\n  tipo: issueType,\n  categoria: extractField(description, 'Categoria') || 'Nao informada',\n  areaAutomatica: classifyArea(description, fields.summary || ''),\n  solicitante: fields.reporter?.displayName || 'Anonimo',\n  emailSolicitante: fields.reporter?.emailAddress || '',\n  empresa: fields.customfield_10079?.value || 'Nao informada',\n  setor: fields.customfield_10078?.value || 'Nao informado',\n  criadoEm: new Date(fields.created || Date.now()).toLocaleString('pt-BR', {\n    timeZone: 'America/Sao_Paulo',\n    dateStyle: 'short',\n    timeStyle: 'medium'\n  }),\n  timestampCriacao: fields.created,\n  tempoDecorridoMin: Math.floor((Date.now() - new Date(fields.created).getTime()) / 60000)\n};\nticketData.flags = {\n  requereAtencaoImediata: ticketData.urgenciaCalculada === 'Critica',\n  possuiAnexo: !!(fields.attachment && fields.attachment.length > 0),\n  temDescricaoCompleta: description.length > 50,\n  primeiroTicket: ticketData.tempoDecorridoMin < 5\n};\nreturn { json: ticketData };"
+      },
+      "id": "574a6faf-cc2c-4499-a23a-25ae76ad20a4",
+      "name": "Data Extractor",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1504,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googlePalmApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{ $credentials.apiKey }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "contents",
+              "value": "=[{\"parts\":[{\"text\":\"Voce e um analista tecnico senior especializado em suporte de TI. Analise este chamado e forneca uma avaliacao profissional e objetiva.\\n\\n=== DADOS DO CHAMADO ===\\nTitulo: {{ $json.titulo }}\\nDescricao: {{ $json.descricaoCompleta }}\\nEmpresa: {{ $json.empresa }}\\nSetor: {{ $json.setor }}\\nPrioridade: {{ $json.prioridade }}\\nTipo: {{ $json.tipo }}\\nArea Identificada: {{ $json.areaAutomatica }}\\n\\n=== CONTEXTO ADICIONAL ===\\nTempo desde abertura: {{ $json.tempoDecorridoMin }} minutos\\nUrgencia calculada: {{ $json.urgenciaCalculada }}\\nSLA sugerido: {{ $json.slaCalculado }}\\n\\n=== INSTRUCOES ===\\nResponda APENAS com um objeto JSON valido (sem markdown, sem formatacao adicional).\\nBase sua analise em fatos tecnicos, nao em suposicoes.\\nSe informacoes forem insuficientes, indique claramente.\\n\\nFormato de resposta:\\n{\\n  \\\"diagnostico\\\": \\\"Analise tecnica objetiva do problema em ate 120 caracteres\\\",\\n  \\\"severidadeAvaliada\\\": \\\"Critica|Alta|Media|Baixa\\\",\\n  \\\"acaoImediata\\\": \\\"Proximo passo tecnico especifico em ate 180 caracteres\\\",\\n  \\\"slaRecomendado\\\": \\\"30min|1-2h|4h|8h|24h\\\",\\n  \\\"areaTecnica\\\": \\\"Infraestrutura|Software|Hardware|Rede|Acesso|Outro\\\",\\n  \\\"contextoRelevante\\\": \\\"Informacao critica para resolucao em ate 180 caracteres\\\",\\n  \\\"confiancaAnalise\\\": \\\"Alta|Media|Baixa (baseado na qualidade das informacoes)\\\"\\n}\"}]}]"
+            },
+            {
+              "name": "generationConfig",
+              "value": "{\"temperature\": 0.3, \"maxOutputTokens\": 1000}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a9a6c9fc-97be-4df6-9212-5e5f396aeeba",
+      "name": "Gemini Technical Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1296,
+        1296
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "",
+          "name": "Google Gemini(PaLM) Api account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const ticket = $('Data Extractor').first().json;\nconst geminiResp = $input.first().json;\nconst createFallback = (ticketData) => {\n  return {\n    diagnostico: `Ticket classificado como ${ticketData.tipo} - requer analise tecnica`,\n    severidadeAvaliada: ticketData.urgenciaCalculada,\n    acaoImediata: `Verificar detalhes do chamado e realizar diagnostico inicial na area de ${ticketData.areaAutomatica}`,\n    slaRecomendado: ticketData.slaCalculado,\n    areaTecnica: ticketData.areaAutomatica,\n    contextoRelevante: ticketData.flags.requereAtencaoImediata ? \n      'ATENCAO: Ticket marcado como critico - priorizar atendimento' : \n      'Ticket aguardando triagem do time tecnico',\n    confiancaAnalise: 'Baixa'\n  };\n};\nlet analise = createFallback(ticket);\ntry {\n  const candidates = geminiResp.candidates || [];\n  if (candidates.length === 0) {\n    throw new Error('Gemini nao retornou candidatos');\n  }\n  const content = candidates[0]?.content?.parts?.[0]?.text || '';\n  if (!content) {\n    throw new Error('Conteudo vazio do Gemini');\n  }\n  let jsonText = content\n    .replace(/```json\\n?/g, '')\n    .replace(/```\\n?/g, '')\n    .replace(/^[^{]*/, '')\n    .replace(/[^}]*$/, '')\n    .trim();\n  const parsed = JSON.parse(jsonText);\n  if (parsed.diagnostico && parsed.severidadeAvaliada && parsed.acaoImediata) {\n    analise = {\n      diagnostico: parsed.diagnostico || analise.diagnostico,\n      severidadeAvaliada: parsed.severidadeAvaliada || analise.severidadeAvaliada,\n      acaoImediata: parsed.acaoImediata || analise.acaoImediata,\n      slaRecomendado: parsed.slaRecomendado || analise.slaRecomendado,\n      areaTecnica: parsed.areaTecnica || analise.areaTecnica,\n      contextoRelevante: parsed.contextoRelevante || analise.contextoRelevante,\n      confiancaAnalise: parsed.confiancaAnalise || 'Media'\n    };\n    console.log('Analise do Gemini processada com sucesso');\n  } else {\n    console.warn('Analise do Gemini incompleta, usando fallback');\n  }\n} catch (erro) {\n  console.error('Erro ao processar Gemini, usando fallback:', erro.message);\n}\nconst agora = new Date();\nconst resultado = {\n  ...ticket,\n  analise: analise,\n  metadados: {\n    processadoEm: agora.toLocaleTimeString('pt-BR'),\n    processadoPor: 'Gemini 2.0 Flash',\n    workflowVersion: '2.0',\n    confianca: analise.confiancaAnalise\n  },\n  alertas: {\n    slaApertado: analise.slaRecomendado === '30min' || analise.slaRecomendado === '1-2h',\n    severidadeAlta: analise.severidadeAvaliada === 'Critica' || analise.severidadeAvaliada === 'Alta',\n    baixaConfianca: analise.confiancaAnalise === 'Baixa'\n  }\n};\nreturn { json: resultado };"
+      },
+      "id": "09a6f80c-3309-4588-a009-ee4f09c73186",
+      "name": "Analysis Processor",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1072,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "critical-path",
+              "leftValue": "={{ $json.alertas.severidadeAlta }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "139695fb-0dc5-4f14-8c75-0cfecfcf4c5b",
+      "name": "Route by Severity",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -784,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "695330333943660546",
+          "mode": "list",
+          "cachedResultName": "TAS - teste"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1420561187896299712",
+          "mode": "list",
+          "cachedResultName": "n8n"
+        },
+        "content": "=**ALERTA CRITICO - CHAMADO PRIORITARIO**\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**IDENTIFICACAO**\nChamado: {{ $json.key }}\nLink: {{ $json.url }}\nAberto ha: {{ $json.tempoDecorridoMin }} minutos\n\n**SOLICITANTE**\nNome: {{ $json.solicitante }}\nEmpresa: {{ $json.empresa }}\nSetor: {{ $json.setor }}\n\n**CLASSIFICACAO AUTOMATICA**\nPrioridade Original: {{ $json.prioridade }}\nUrgencia Calculada: {{ $json.urgenciaCalculada }}\nSLA Sugerido: {{ $json.slaCalculado }}\nArea: {{ $json.areaAutomatica }}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n**ANALISE TECNICA AVANCADA**\n\n**Diagnostico:**\n{{ $json.analise.diagnostico }}\n\n**Severidade Avaliada:** {{ $json.analise.severidadeAvaliada }}\n**SLA Recomendado:** {{ $json.analise.slaRecomendado }}\n**Area Tecnica:** {{ $json.analise.areaTecnica }}\n**Confianca da Analise:** {{ $json.analise.confiancaAnalise }}\n\n**Acao Imediata Recomendada:**\n{{ $json.analise.acaoImediata }}\n\n**Contexto Relevante:**\n{{ $json.analise.contextoRelevante }}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n**TITULO DO CHAMADO**\n{{ $json.titulo }}\n\n**DESCRICAO COMPLETA**\n```\n{{ $json.descricao }}\n```\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n**FLAGS DE ATENCAO**\n{{ $json.flags.requereAtencaoImediata ? '- REQUER ATENCAO IMEDIATA' : '' }}\n{{ $json.flags.possuiAnexo ? '- Possui anexos' : '' }}\n{{ $json.alertas.slaApertado ? '- SLA APERTADO' : '' }}\n{{ $json.alertas.baixaConfianca ? '- Analise com baixa confianca - revisar manualmente' : '' }}\n\n_Processado: {{ $json.metadados.processadoEm }} | Engine: {{ $json.metadados.processadoPor }} | v{{ $json.metadados.workflowVersion }}_",
+        "options": {}
+      },
+      "id": "5f562f2c-3b9a-4741-817f-4683ef4534cc",
+      "name": "Discord Critical Alert",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        1184
+      ],
+      "webhookId": "critical-webhook",
+      "credentials": {
+        "discordOAuth2Api": {
+          "id": "",
+          "name": "Discord account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "695330333943660546",
+          "mode": "list",
+          "cachedResultName": "TAS - teste"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1420561187896299712",
+          "mode": "list",
+          "cachedResultName": "n8n"
+        },
+        "content": "=**NOVO CHAMADO TECNICO**\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n**IDENTIFICACAO**\nChamado: {{ $json.key }}\nLink: {{ $json.url }}\nAberto em: {{ $json.criadoEm }}\n\n**SOLICITANTE**\nNome: {{ $json.solicitante }}\nEmpresa: {{ $json.empresa }}\nSetor: {{ $json.setor }}\n\n**CLASSIFICACAO AUTOMATICA**\nPrioridade: {{ $json.prioridade }}\nTipo: {{ $json.tipo }}\nCategoria: {{ $json.categoria }}\nArea Identificada: {{ $json.areaAutomatica }}\nSLA Calculado: {{ $json.slaCalculado }}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n**ANALISE TECNICA**\n\n**Diagnostico:**\n{{ $json.analise.diagnostico }}\n\n**Severidade:** {{ $json.analise.severidadeAvaliada }}\n**SLA Recomendado:** {{ $json.analise.slaRecomendado }}\n**Area Tecnica:** {{ $json.analise.areaTecnica }}\n\n**Acao Imediata:**\n{{ $json.analise.acaoImediata }}\n\n**Contexto:**\n{{ $json.analise.contextoRelevante }}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n**DESCRICAO**\n```\n{{ $json.descricao }}\n```\n\n_Processado: {{ $json.metadados.processadoEm }} | Confianca: {{ $json.metadados.confianca }}_",
+        "options": {}
+      },
+      "id": "2ca763cd-a017-40f4-9d80-f19a94693326",
+      "name": "Discord Standard",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        1424
+      ],
+      "webhookId": "normal-webhook",
+      "credentials": {
+        "discordOAuth2Api": {
+          "id": "",
+          "name": "Discord account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "issueKey": "={{ $('Data Extractor').item.json.key }}",
+        "updateFields": {
+          "labels": [
+            "notificado_discord",
+            "analise_automatica"
+          ]
+        }
+      },
+      "id": "744c9737-38e2-4a4e-ae26-3f5e928e8342",
+      "name": "Mark as Processed",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        1312
+      ],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "",
+          "name": "Jira Service Management Cloud API"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "SCHEDULE TRIGGER\n\nExecuta a cada 2 minutos\n\nOTIMIZACAO:\n- Intervalo balanceado\n- Nao sobrecarrega API\n- Detecta tickets rapidamente\n\nJANELA DE DETECCAO:\nFiltra tickets de ate 2.5min\n(2min schedule + 0.5min margem)",
+        "height": 300,
+        "width": 340,
+        "color": 4
+      },
+      "id": "212d6aa2-9ce9-4e37-9b2d-21d8fc900887",
+      "name": "Note - Schedule",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2528,
+        1632
+      ]
+    },
+    {
+      "parameters": {
+        "content": "FETCH JIRA TICKETS\n\nBusca todos os tickets\nSem filtros JQL\n\nRETORNO:\nArray completo de tickets\n\nFILTRAGEM:\nAcontece no proximo no",
+        "height": 300,
+        "width": 340,
+        "color": 5
+      },
+      "id": "36221646-5cd2-41a6-91c7-87dd724fb86d",
+      "name": "Note - Fetch",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2160,
+        1632
+      ]
+    },
+    {
+      "parameters": {
+        "content": "SMART FILTER\n\nFILTRAGEM DUPLA:\n1. Tempo: <= 2.5min\n2. Label: sem 'notificado_discord'\n\nVALIDACAO:\n- Verifica integridade dos dados\n- Log de tickets filtrados\n\nRESULTADO:\nApenas tickets novos e validos",
+        "height": 300,
+        "width": 340,
+        "color": 6
+      },
+      "id": "ec565f49-b7ab-4b38-9a77-4169b7cfef1b",
+      "name": "Note - Filter",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1808,
+        1632
+      ]
+    },
+    {
+      "parameters": {
+        "content": "BATCH PROCESSOR\n\nPROCESSA 1 POR VEZ\n\nPOR QUE?\n- Discord: 1 msg/vez\n- Jira: 1 update/vez\n- Gemini: 1 analise/vez\n- Evita rate limit\n\nLOOP:\nVolta ate processar todos",
+        "height": 300,
+        "width": 340,
+        "color": 5
+      },
+      "id": "10082a14-51bf-4def-9b0c-04ba49bf8f68",
+      "name": "Note - Batch",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        1632
+      ]
+    },
+    {
+      "parameters": {
+        "content": "DATA EXTRACTOR\n\nEXTRACAO AVANCADA:\n- Normaliza campos\n- Calcula urgencia\n- Calcula SLA automatico\n- Classifica area tecnica\n- Gera flags de alerta\n\nINTELIGENCIA:\nAnalise pre-IA baseada em regras",
+        "height": 300,
+        "width": 340,
+        "color": 5
+      },
+      "id": "f8abfcd9-d811-4423-8ae7-29d87749202e",
+      "name": "Note - Extract",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1088,
+        1632
+      ]
+    },
+    {
+      "parameters": {
+        "content": "GEMINI ANALYSIS\n\nAPI DIRETA (NAO USA AGENT!)\n\nMODEL: gemini-2.0-flash-exp\nTEMP: 0.3 (consistente)\nTOKENS: 1000\n\nPROMPT OTIMIZADO:\n- Contexto completo\n- Instrucoes claras\n- JSON estruturado\n\nSEM LANGCHAIN!",
+        "height": 300,
+        "width": 340,
+        "color": 6
+      },
+      "id": "d6198680-3d75-4788-b149-d7ba8d2c9427",
+      "name": "Note - Gemini",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        1632
+      ]
+    },
+    {
+      "parameters": {
+        "content": "ANALYSIS PROCESSOR\n\nFALLBACK ROBUSTO:\n- Se Gemini falhar, usa regras\n- Valida todos os campos\n- Nunca quebra o workflow\n\nENRIQUECIMENTO:\n- Adiciona metadados\n- Gera alertas\n- Calcula confianca\n\nGARANTIA:\nSempre retorna analise util",
+        "height": 332,
+        "width": 340,
+        "color": 5
+      },
+      "id": "d5ec7997-1d6e-46fe-834a-87467da328c6",
+      "name": "Note - Processor",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        1632
+      ]
+    },
+    {
+      "parameters": {
+        "content": "ROUTE BY SEVERITY\n\nROTEAMENTO INTELIGENTE:\n\nSe Critica/Alta:\n-> Canal prioritario\n-> Mensagem com alerta\n-> Destaque visual\n\nSe Media/Baixa:\n-> Canal padrao\n-> Mensagem normal\n\nOTIMIZACAO:\nEquipe foca no urgente",
+        "height": 300,
+        "width": 340,
+        "color": 6
+      },
+      "id": "3cef8adb-30b3-4bac-81da-b5ee0e9c8583",
+      "name": "Note - Router",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1632
+      ]
+    },
+    {
+      "parameters": {
+        "content": "DISCORD CHANNELS\n\nDUAS ROTAS:\n\n1. CRITICAL ALERT\n- Mensagem expandida\n- Todas as flags\n- Destaque maximo\n\n2. STANDARD\n- Mensagem limpa\n- Info essencial\n- Formato padrao\n\nSEM EMOJIS!\nFormato corporativo",
+        "height": 300,
+        "width": 340,
+        "color": 5
+      },
+      "id": "6cda9426-bff3-438c-bd66-40b5340309b6",
+      "name": "Note - Discord",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        368,
+        1632
+      ]
+    },
+    {
+      "parameters": {
+        "content": "MARK AS PROCESSED\n\nADICIONA 2 LABELS:\n1. notificado_discord\n2. analise_automatica\n\nCONTROLE:\n- Evita duplicatas\n- Rastreia processados\n- Auditoria completa\n\nREFERENCIA:\nUsa Data Extractor.key\n(referencia absoluta)",
+        "height": 300,
+        "width": 340,
+        "color": 3
+      },
+      "id": "5bc65041-015a-47b2-bb00-124b3ec23080",
+      "name": "Note - Label",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        1632
+      ]
+    }
+  ],
+  "pinData": {
+    "Tickets Notificados": [
+      {
+        "json": {
+          "tickets": []
+        }
+      }
+    ]
+  },
+  "connections": {
+    "A cada 2 minutos": {
+      "main": [
+        [
+          {
+            "node": "Buscar Tickets Jira",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Tickets Jira": {
+      "main": [
+        [
+          {
+            "node": "Filtrar por Tempo e Label",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar por Tempo e Label": {
+      "main": [
+        [
+          {
+            "node": "Loop Tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Tickets": {
+      "main": [
+        [
+          {
+            "node": "Preparar Dados",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Dados": {
+      "main": [
+        [
+          {
+            "node": "Notificar Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notificar Discord": {
+      "main": [
+        [
+          {
+            "node": "Adicionar Label",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Jira Tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Jira Tickets": {
+      "main": [
+        [
+          {
+            "node": "Smart Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Smart Filter": {
+      "main": [
+        [
+          {
+            "node": "Batch Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Batch Processor": {
+      "main": [
+        [
+          {
+            "node": "Data Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Batch Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Extractor": {
+      "main": [
+        [
+          {
+            "node": "Gemini Technical Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Technical Analysis": {
+      "main": [
+        [
+          {
+            "node": "Analysis Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analysis Processor": {
+      "main": [
+        [
+          {
+            "node": "Route by Severity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Severity": {
+      "main": [
+        [
+          {
+            "node": "Discord Critical Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Discord Standard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Discord Critical Alert": {
+      "main": [
+        [
+          {
+            "node": "Mark as Processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Discord Standard": {
+      "main": [
+        [
+          {
+            "node": "Mark as Processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "errorWorkflow": "ukU4qCdeGUJTTdhx"
+  },
+  "versionId": "46d020f3-ccdf-45d5-89f0-47c94cfa56e2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b93d26d78f3422a2df7daf09364ceee25a1cd3223a663b1fe4533d415237602"
+  },
+  "id": "ukU4qCdeGUJTTdhx",
+  "tags": [
+    {
+      "updatedAt": "2025-11-13T10:28:59.210Z",
+      "createdAt": "2025-11-13T10:28:59.210Z",
+      "id": "9MUPjQ9DCi0yaf3O",
+      "name": "PROD"
+    }
+  ]
+}

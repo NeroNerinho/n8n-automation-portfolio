@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://n8n.grupoom.com.br;">
+    <title>Checking OpusMúltipla</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="main-content">
+        <div class="container">
+            <!-- Header -->
+            <header class="header">
+                <div class="logo-container">
+                    <img src="assets/logo.png" alt="OpusMúltipla" class="logo-img">
+                    <img src="assets/grupo_om_symbol.png" alt="Grupo OM" class="logo-symbol">
+                </div>
+                <h1>Central de Checking</h1>
+                <p class="header-subtitle">Envio de comprovantes e relatórios de veiculação</p>
+
+                <details class="media-guide">
+                    <summary>
+                        <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="18"
+                                height="18">
+                                <path
+                                    d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z" />
+                            </svg>
+                            Guia de Envio por Tipo de Meio
+                        </div>
+                        <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
+                            fill="currentColor" width="16" height="16">
+                            <path
+                                d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z" />
+                        </svg>
+                    </summary>
+                    <div class="media-guide-content">
+                        <div class="media-section">
+                            <h4>DOOH / OOH / Mídia Exterior</h4>
+                            <ul class="guide-list">
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">DO</span> <strong>Painel de LED /
+                                            Monitores</strong></div>
+                                    <p class="guide-desc">Relatório fotográfico + relatório de exibições automatizado +
+                                        vídeo diurno. <span class="guide-alert">Incluir nº de inserções</span></p>
+                                </li>
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">ME</span> <strong>MUB
+                                            Estático</strong></div>
+                                    <p class="guide-desc">Relatório com endereço dos pontos + fotos diurnas. <span
+                                            class="guide-alert">Iluminados: Foto noturna obrigatória</span></p>
+                                </li>
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">MO</span> <strong>Metrô</strong>
+                                    </div>
+                                    <p class="guide-desc">Listagem de estações/linhas/carros + fotos ou vídeos
+                                        amostrais.</p>
+                                </li>
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">BD</span> <strong>Busdoor /
+                                            Taxidoor</strong></div>
+                                    <p class="guide-desc">Relatório fotográfico de todos os veículos.</p>
+                                </li>
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">OD</span> <strong>Outdoor /
+                                            Placas</strong></div>
+                                    <p class="guide-desc">Relatório com endereço (1 foto longe + 1 perto). <span
+                                            class="guide-alert">Iluminados: Foto noturna</span></p>
+                                </li>
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">FL</span>
+                                        <strong>Frontlight</strong>
+                                    </div>
+                                    <p class="guide-desc">Relatório com endereço. <span class="guide-alert">Iluminados:
+                                            Foto noturna obrigatória</span></p>
+                                </li>
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">MI</span> <strong>Mídia
+                                            Interna</strong></div>
+                                    <p class="guide-desc">Relatório fotográfico de todos os pontos + relação de locais.
+                                    </p>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="media-section">
+                            <h4>Outros Meios</h4>
+                            <ul class="guide-list">
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">RD</span> <span
+                                            class="badge-code">TP</span> <strong>Rádio / Patrocínios</strong></div>
+                                    <p class="guide-desc">Relatório de veiculação automatizado. <span
+                                            class="guide-alert">Ao vivo: Enviar gravação</span></p>
+                                </li>
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">JO</span> <span
+                                            class="badge-code">RV</span> <strong>Jornal / Revista</strong></div>
+                                    <p class="guide-desc">Material físico ou PDF da capa + página do anúncio.</p>
+                                </li>
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">CI</span> <strong>Cinema</strong>
+                                    </div>
+                                    <p class="guide-desc">Relatório de exibição (complexo, nº salas, praça).</p>
+                                </li>
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">AT</span>
+                                        <strong>Ativação</strong>
+                                    </div>
+                                    <p class="guide-desc">Relatório fotográfico/vídeos + detalhamento das ações.</p>
+                                </li>
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">TV</span>
+                                        <strong>Televisão</strong>
+                                    </div>
+                                    <p class="guide-desc">Relatório de veiculação automatizado.</p>
+                                </li>
+                                <li>
+                                    <div class="guide-header"><span class="badge-code">IN</span>
+                                        <strong>Internet</strong>
+                                    </div>
+                                    <p class="guide-desc">Relatório de veiculação métricas + prints das peças.</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </details>
+            </header>
+
+            <form id="checkingForm" novalidate>
+
+                <!-- Section 1: Seus Dados -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="24"
+                                height="24">
+                                <path
+                                    d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z" />
+                            </svg>
+                        </div>
+                        <h2 class="section-title">Seus Dados</h2>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="nome">Nome Completo *</label>
+                            <input type="text" id="nome" name="nome" required placeholder="Digite seu nome completo"
+                                maxlength="200">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">E-mail *</label>
+                            <input type="email" id="email" name="email" required placeholder="seu@email.com"
+                                maxlength="254">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefone">Telefone *</label>
+                            <input type="tel" id="telefone" name="telefone" required placeholder="(00) 00000-0000"
+                                maxlength="20">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Identificação do Pedido -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="24"
+                                height="24">
+                                <path
+                                    d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z" />
+                            </svg>
+                        </div>
+                        <h2 class="section-title">Identificação do Pedido</h2>
+                    </div>
+
+                    <div class="form-grid">
+                        <!-- Toggle -->
+                        <div class="form-group full-width">
+                            <label>Buscar por:</label>
+                            <div class="search-toggle">
+                                <button type="button" class="toggle-btn active" id="btn-mode-pi">Número da PI</button>
+                                <button type="button" class="toggle-btn" id="btn-mode-cnpj">CNPJ do Veículo</button>
+                            </div>
+                        </div>
+
+                        <!-- Search Input -->
+                        <div class="form-group full-width">
+                            <label for="search-input" id="search-label">Número da PI *</label>
+                            <input type="text" id="search-input" name="n_pi" required placeholder="Ex: 12345/24"
+                                maxlength="50">
+                            <div id="searchStatus"></div>
+                        </div>
+
+                        <!-- PI Results -->
+                        <div class="form-group full-width" id="pi-results-area" style="display: none;">
+                            <label>Selecione a PI:</label>
+                            <div id="pi-results-list" class="pi-results-list"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Dados do Pedido -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </div>
+                        <h2 class="section-title">Dados do Pedido</h2>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="cliente">Cliente</label>
+                            <input type="text" id="cliente" name="cliente" readonly placeholder="—">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="campanha">Campanha</label>
+                            <input type="text" id="campanha" name="campanha" readonly placeholder="—">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="produto">Produto</label>
+                            <input type="text" id="produto" name="produto" readonly placeholder="—">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="periodo">Período</label>
+                            <input type="text" id="periodo" name="periodo" readonly placeholder="—">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="veiculo">Veículo</label>
+                            <input type="text" id="veiculo" name="veiculo" readonly placeholder="—">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="meio">Meio</label>
+                            <select id="meio" name="meio" class="campo-bloqueado">
+                                <option value="">Aguardando PI...</option>
+                                <option value="AS">Assessoria de Imprensa</option>
+                                <option value="AT">Ativação</option>
+                                <option value="BD">Busdoor</option>
+                                <option value="BP">Produção Busdoor</option>
+                                <option value="BR">Brinde</option>
+                                <option value="BV">Bonificação de Volume</option>
+                                <option value="CA">Cachê de Modelo</option>
+                                <option value="CI">Cinema</option>
+                                <option value="CN">Cinema</option>
+                                <option value="CP">Produção Cinema</option>
+                                <option value="CR">Criação / Adaptação</option>
+                                <option value="CS">Carro de Som</option>
+                                <option value="DE">Despesa</option>
+                                <option value="DO">Digital Out of Home</option>
+                                <option value="EP">Produção Mídia Externa</option>
+                                <option value="EV">Promoção/Eventos</option>
+                                <option value="FE">FEE MÍDIA</option>
+                                <option value="FI">Fidelidade</option>
+                                <option value="FL">Frontlight</option>
+                                <option value="FO">Fotógrafo</option>
+                                <option value="FP">FreeLancer Pesquisa</option>
+                                <option value="FT">Fotolito</option>
+                                <option value="GD">Gigadoor</option>
+                                <option value="GO">Gráfica Off-Set</option>
+                                <option value="GS">Gráfica Serigrafia</option>
+                                <option value="IA">Internet-Audio</option>
+                                <option value="IB">Internet-Busca</option>
+                                <option value="ID">Internet-Display e outros</option>
+                                <option value="IL">Ilustrador</option>
+                                <option value="IN">Internet</option>
+                                <option value="IP">Instituto de Pesquisa</option>
+                                <option value="IS">Internet-Social</option>
+                                <option value="IV">Internet-Video</option>
+                                <option value="JN">Jornal</option>
+                                <option value="LO">Locação Áudio e Vídeo</option>
+                                <option value="MA">Mídia Alternativa</option>
+                                <option value="MD">Mala Direta</option>
+                                <option value="ME">Mídia Externa</option>
+                                <option value="MI">Material de Informática</option>
+                                <option value="ML">Material de Limpeza</option>
+                                <option value="MN">Mídia Interna</option>
+                                <option value="MO">Material de Escritório</option>
+                                <option value="MS">Mídia Social</option>
+                                <option value="MT">Metrô</option>
+                                <option value="OD">Outdoor</option>
+                                <option value="OU">Outros</option>
+                                <option value="PA">Prod. Áudio</option>
+                                <option value="PB">Produção de Mala Direta</option>
+                                <option value="PC">Prod. Computação</option>
+                                <option value="PD">Produção Rádio</option>
+                                <option value="PF">Produção Frontlight</option>
+                                <option value="PH">Produção Dooh</option>
+                                <option value="PI">Produção Mídia Interna</option>
+                                <option value="PJ">Produção Jornal</option>
+                                <option value="PM">Produção Metrô</option>
+                                <option value="PN">Produção Internet</option>
+                                <option value="PO">Produção Outdoor</option>
+                                <option value="PQ">Pesquisa de Mercado</option>
+                                <option value="PS">Produção de Revista</option>
+                                <option value="PT">Produção TV</option>
+                                <option value="PV">Prod. VT/Filme</option>
+                                <option value="PW">Produção de Internet</option>
+                                <option value="PY">Produção/Material Ativação</option>
+                                <option value="RA">Rádio AM</option>
+                                <option value="RD">Rádio</option>
+                                <option value="RE">Revista</option>
+                                <option value="RF">Rádio FM</option>
+                                <option value="RL">Relações Públicas</option>
+                                <option value="RP">Representante</option>
+                                <option value="RT">Reserva Técnica</option>
+                                <option value="TA">TV Assinatura</option>
+                                <option value="TO">Tailor Operações</option>
+                                <option value="TR">Tradutor</option>
+                                <option value="TV">Televisão</option>
+                                <option value="VE">Venda de Espaço</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="observacoes">Observações</label>
+                            <textarea id="observacoes" name="observacoes" placeholder="Adicione observações (opcional)"
+                                maxlength="2000" rows="3"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4: Comprovantes -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48">
+                                </path>
+                            </svg>
+                        </div>
+                        <h2 class="section-title">Comprovantes</h2>
+                    </div>
+
+                    <!-- Warning -->
+                    <div class="warning-box">
+                        <strong>Atenção:</strong> Múltiplas fotos/vídeos devem ser <strong>zipados</strong>. Limite de
+                        <strong>500MB</strong> por envio.
+                    </div>
+
+                    <div id="upload-area-dinamica" class="upload-container">
+                        <div id="upload-placeholder">
+                            <svg class="placeholder-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <p>Busque o número da PI para liberar os campos de anexo</p>
+                        </div>
+
+                        <!-- Campos Adicionais -->
+                        <div id="field-ins-total" class="extra-field" style="display: none;">
+                            <label for="num_insercoes">Número de Inserções Totais *</label>
+                            <input type="number" id="num_insercoes" name="num_insercoes" placeholder="Ex: 500">
+                        </div>
+
+                        <div id="field-marc-veiculo" class="extra-field" style="display: none;">
+                            <label class="checkbox-group">
+                                <input type="checkbox" name="marcacao_veiculo" value="X">
+                                <span>Marcação do Veículo (Fotos Amostrais de Circuitos / MUB / Shoppings)</span>
+                            </label>
+                        </div>
+
+                        <!-- DO: Digital Out of Home (3 Fields) -->
+                        <div class="upload-group" data-meio="DO PH" style="display: none;">
+                            <div class="upload-field-row">
+                                <label>Anexo 1: Relatório Fotográfico de Todos os Pontos *</label>
+                                <input type="file" name="do_anexo_1" multiple accept="image/*,.pdf,.zip" required>
+                            </div>
+                            <div class="upload-field-row">
+                                <label>Anexo 2: Relatório de Exibições Automatizado *</label>
+                                <input type="file" name="do_anexo_2" multiple accept=".pdf,.xlsx,.csv,.zip" required>
+                            </div>
+                            <div class="upload-field-row">
+                                <label>Anexo 3: Vídeo Diurno em Funcionamento *</label>
+                                <input type="file" name="do_anexo_3" multiple accept="video/*,.zip" required>
+                            </div>
+                            <small class="field-desc">DOOH (Painel Led/Monitores): Fotos + Relatório + Vídeo.</small>
+                        </div>
+
+                        <!-- ME: Mídia Exterior / MUB (2 Fields) -->
+                        <div class="upload-group" data-meio="ME EP" style="display: none;">
+                            <div class="upload-field-row">
+                                <label>Anexo 1: Relatório com o Endereço dos Pontos *</label>
+                                <input type="file" name="me_anexo_1" multiple accept="image/*,.pdf,.xlsx,.zip" required>
+                            </div>
+                            <div class="upload-field-row">
+                                <label>Anexo 2: Fotos Diurnas (Amostrais) *</label>
+                                <input type="file" name="me_anexo_2" multiple accept="image/*,.pdf,.zip" required>
+                            </div>
+                            <small class="field-desc">MUB estático: Endereços + Fotos. ILUMINADOS: obrigatório foto
+                                NOTURNA.</small>
+                        </div>
+
+                        <!-- MO: Metrô (2 Fields) -->
+                        <div class="upload-group" data-meio="MO MT PM" style="display: none;">
+                            <div class="upload-field-row">
+                                <label>Anexo 1: Relatório com Listagem das Estações/Linhas *</label>
+                                <input type="file" name="mo_anexo_1" multiple accept="image/*,.pdf,.xlsx,.zip" required>
+                            </div>
+                            <div class="upload-field-row">
+                                <label>Anexo 2: Fotos ou Vídeos (Amostrais) *</label>
+                                <input type="file" name="mo_anexo_2" multiple accept="image/*,video/*,.pdf,.zip"
+                                    required>
+                            </div>
+                            <small class="field-desc">Metrô estático: Linhas/Carros + Fotos ou Vídeos.</small>
+                        </div>
+
+                        <!-- BD: Busdoor -->
+                        <div class="upload-group" data-meio="BD BP" style="display: none;">
+                            <label>Anexo: Relatório Fotográfico de Todos os Veículos *</label>
+                            <input type="file" name="relatorio_busdoor" multiple accept="image/*,.pdf,.zip" required>
+                            <small class="field-desc">Relatório fotográfico de todos os ônibus/carros.</small>
+                        </div>
+
+                        <!-- OD: Outdoor / Placas Comunitárias -->
+                        <div class="upload-group" data-meio="OD PO" style="display: none;">
+                            <label>Anexo: 1 Foto de Longe + 1 de Perto de TODOS os Pontos *</label>
+                            <input type="file" name="relatorio_outdoor" multiple accept="image/*,.pdf,.zip" required>
+                            <small class="field-desc">Uninter: Obrigatório 1 longe + 1 perto de cada local.</small>
+                        </div>
+
+                        <!-- FL: Frontlight -->
+                        <div class="upload-group" data-meio="FL PF" style="display: none;">
+                            <label>Anexo: Relatório Fotográfico com Endereço *</label>
+                            <input type="file" name="relatorio_frontlight" multiple accept="image/*,.pdf,.zip" required>
+                            <small class="field-desc">Fotos de todos os pontos. Iluminados: incluir noturna.</small>
+                        </div>
+
+                        <!-- MI: Mídia Interna -->
+                        <div class="upload-group" data-meio="MI MN PI" style="display: none;">
+                            <label>Anexo: Relatório Fotográfico + Relação de Locais *</label>
+                            <input type="file" name="relatorio_midia_interna" multiple accept="image/*,.pdf,.zip"
+                                required>
+                            <small class="field-desc">Relatório fotográfico de todos os pontos e relação de
+                                locais.</small>
+                        </div>
+
+                        <!-- RD/TP: Rádio/Patrocínios -->
+                        <div class="upload-group" data-meio="RD TP PD RA RF" style="display: none;">
+                            <label>Anexo: Relatório de Veiculação / Gravação de Ação *</label>
+                            <input type="file" name="relatorio_radio" multiple
+                                accept=".pdf,.mp3,.wav,audio/*,.zip,.xlsx" required>
+                            <small class="field-desc">Automatizado ou Declaração. Ações ao vivo: enviar
+                                gravação.</small>
+                        </div>
+
+                        <!-- JO/RV: Jornal/Revista -->
+                        <div class="upload-group" data-meio="JO RV JN RE PS PJ" style="display: none;">
+                            <label>Anexo: Material Físico / PDF / Foto do Título *</label>
+                            <input type="file" name="material_impresso" multiple accept="image/*,.pdf,.zip" required>
+                            <small class="field-desc">PDF da Revista Digital ou foto da Capa + página do
+                                anúncio.</small>
+                        </div>
+
+                        <!-- CI: Cinema -->
+                        <div class="upload-group" data-meio="CI CN CP" style="display: none;">
+                            <label>Anexo: Relatório de Exibição (Complexo/Salas/Praça) *</label>
+                            <input type="file" name="relatorio_cinema" multiple accept="image/*,.pdf,.zip" required>
+                            <small class="field-desc">Relatório detalhando as exibições no cinema.</small>
+                        </div>
+
+                        <!-- AT: Ativação / Projetos Especiais -->
+                        <div class="upload-group" data-meio="AT PY" style="display: none;">
+                            <label>Anexo: Relatório Fotográfico / Vídeos / Detalhamento das Ações *</label>
+                            <input type="file" name="relatorio_ativacao" multiple accept="image/*,video/*,.pdf,.zip"
+                                required>
+                            <small class="field-desc">Relatório detalhado das ações após o término.</small>
+                        </div>
+
+                        <!-- TV/TP: TV/Patrocínios -->
+                        <div class="upload-group" data-meio="TV TP PT PV TA" style="display: none;">
+                            <label>Anexo: Relatório de Veiculação Automatizado *</label>
+                            <input type="file" name="relatorio_tv" multiple accept=".pdf,.xlsx,.xlsx,.zip" required>
+                            <small class="field-desc">Relatório oficial (RVC) do veículo.</small>
+                        </div>
+
+                        <!-- IN: Internet -->
+                        <div class="upload-group" data-meio="IN PN PW" style="display: none;">
+                            <label>Anexo: Relatório de Veiculação + Prints das Peças *</label>
+                            <input type="file" name="relatorio_internet" multiple accept="image/*,.pdf,.zip" required>
+                            <small class="field-desc">Relatório de métricas + prints das peças.</small>
+                        </div>
+
+                        <!-- DEFAULT: Fallback para outros meios -->
+                        <div class="upload-group" data-meio="DEFAULT" style="display: none;">
+                            <label>Anexo: Comprovante de Veiculação / Checking *</label>
+                            <input type="file" name="anexo_geral" multiple accept="image/*,video/*,.pdf,.zip" required>
+                            <small class="field-desc">Envie o comprovante de checking para este meio.</small>
+                        </div>
+
+                        <!-- OOH: Container para Endereços Dinâmicos (OD/FL) -->
+                        <div id="ooh-addresses-container" class="ooh-container" style="display: none;"></div>
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar-wrapper">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">0%</div>
+                    </div>
+
+                    <button type="submit" id="btn-submit">Enviar Checking</button>
+
+                    <div class="message-box" id="successMessage"></div>
+                    <div class="message-box" id="errorMessage"></div>
+                </section>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer-final">
+        <div class="footer-logo-container">
+            <img src="footer_logo.png" alt="Grupo OM" class="footer-img-logo-large">
+        </div>
+
+        <div class="footer-content">
+            <div class="footer-column">
+                <p class="footer-desc">OpusMúltipla Comunicação Integrada</p>
+                <p class="footer-address">Rua Comendador Araújo, 117 - Centro<br>Curitiba - PR, 80420-000</p>
+            </div>
+
+            <div class="footer-column">
+                <h4>Contato</h4>
+                <p>Dúvidas sobre envios?</p>
+                <a href="mailto:checking@grupoom.com.br" class="footer-link">checking@grupoom.com.br</a>
+                <p class="footer-phone">+55 (41) 3333-3333</p>
+            </div>
+
+            <div class="footer-column">
+                <h4>Suporte Técnico</h4>
+                <p>Problemas com a plataforma?</p>
+                <a href="mailto:suporte@grupoom.com.br" class="footer-link">suporte@grupoom.com.br</a>
+                <p class="footer-version">Versão 2.4.0</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="copyright">&copy; 2026 OpusMúltipla - Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <!-- Modal de Interacao Especial -->
+    <div id="easterEggModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div class="video-container">
+                <div id="player"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

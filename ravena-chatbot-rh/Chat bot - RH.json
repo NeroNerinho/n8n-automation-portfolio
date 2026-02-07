@@ -1,0 +1,813 @@
+{
+  "name": "Chat bot - RH",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        5424,
+        1872
+      ],
+      "id": "4fadf135-6e49-4dd3-81e9-231f18352864",
+      "name": "Google Gemini Busca",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HqMdT731KFpBl6X8",
+          "name": "Google Gemini(PaLM) Api account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "rh-manual-knowledge",
+          "mode": "list",
+          "cachedResultName": "rh-manual-knowledge"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        3568,
+        1024
+      ],
+      "id": "04335bb1-17c9-4803-b365-9e6374b7f289",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "cLY2Uz7IOYqi2Ltd",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3456,
+        1264
+      ],
+      "id": "21e49050-b82b-4500-9bcc-8eec821d9f71",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HqMdT731KFpBl6X8",
+          "name": "Google Gemini(PaLM) Api account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 100,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        3616,
+        1392
+      ],
+      "id": "b2ec50c5-8400-46e2-a995-39f336b66d9f",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "binaryMode": "specificField",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        3616,
+        1232
+      ],
+      "id": "60370bec-c6a1-4901-acfa-68c8aa7b68cc",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1YhBrJ_XJVzDZKsntt0MB3vb63hZomWYM",
+          "mode": "list",
+          "cachedResultName": "RHMANUAL.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1YhBrJ_XJVzDZKsntt0MB3vb63hZomWYM/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3376,
+        1024
+      ],
+      "id": "3f545d1b-bbb7-4aae-957e-275c6bf6f486",
+      "name": "Download File From Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "1c3ApLu5B45cMjkz",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        3184,
+        1024
+      ],
+      "id": "a50323e8-378a-4f2b-846f-7fc7d7ddac91",
+      "name": "When clicking 'Execute workflow'"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "rh-chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        4096,
+        1056
+      ],
+      "id": "0835ade1-d18d-48a5-bc80-6847e4f81c4a",
+      "name": "Chatbot",
+      "webhookId": "6b1ab041-8d75-4147-9d2f-5ea0cd60cb37"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        4544,
+        1056
+      ],
+      "id": "65b707c1-a9b0-4b9f-a220-ef3b352a7571",
+      "name": "Responder Webhook Vazio"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.googleapis.com/v1/{{ $json.body.chat?.messagePayload?.space?.name || $json.body.space?.name || $json.body.message?.space?.name }}/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"⏳ Aguarde um momento...\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4656,
+        1248
+      ],
+      "id": "7b4ed32b-38eb-4b99-ad46-1c333c2f231f",
+      "name": "Mensagem Inicial Google Chat",
+      "credentials": {
+        "googleApi": {
+          "id": "5jWMywbgeksqZzLQ",
+          "name": "Google Service Account account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "context_contacts",
+              "value": "=LISTA DE CONTATOS E RESPONSÁVEIS RH:\n- Férias: Leticia (leticia@automation-api.com)\n- Benefícios: Leticia e Michelle (leticia@automation-api.com; michelle.ferreira@automation-api.com)\n- Banco de Horas: Michelle (michelle.ferreira@automation-api.com)\n- Atestados: Michelle (michelle.ferreira@automation-api.com)\n- Treinamentos: Isabela (isabela.dias@automation-api.com)\n- Canal de Ética: Cleia (valdecleiab@automation-api.com)\n- RH Geral: Cleia e Natasha (valdecleiab@automation-api.com; natashab@automation-api.com)\n- Vagas: Marcella (marcellav@automation-api.com)"
+            },
+            {
+              "name": "chat_input",
+              "value": "={{ $json.body.chat?.messagePayload?.message?.text || $json.body.message?.text || $json.body.message?.argumentText || $json.body.chat?.messagePayload?.message?.argumentText || 'Áudio recebido sem transcrição' }}"
+            },
+            {
+              "name": "thread_name",
+              "value": "={{ $json.body.chat?.messagePayload?.message?.thread?.name || $json.body.message?.thread?.name }}"
+            },
+            {
+              "name": "space_name",
+              "value": "={{ $json.body.chat?.messagePayload?.space?.name || $json.body.message?.space?.name }}"
+            },
+            {
+              "name": "user_email",
+              "value": "={{ $json.body.chat?.messagePayload?.message?.sender?.email || $json.body.message?.sender?.email || '' }}"
+            },
+            {
+              "name": "user_name",
+              "value": "={{ $json.body.chat?.messagePayload?.message?.sender?.displayName || $json.body.message?.sender?.displayName || 'Colaborador' }}"
+            },
+            {
+              "name": "current_date",
+              "value": "={{ $now.format('dd/MM/yyyy') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        4512,
+        1408
+      ],
+      "id": "4c5118eb-6fd4-4849-8b1b-8b7fdcf22faa",
+      "name": "Preparar Dados"
+    },
+    {
+      "parameters": {
+        "jsCode": "// RAVENA - Sistema de RH (Versão 6.0 - Sem JSON no prompt)\n\ntry {\n  // === STEP 1: AQUISICAO DE DADOS ===\n  const contacts = items[0]?.json?.context_contacts || \"DADOS DE CONTATO INDISPONIVEIS\";\n  const currentDate = items[0]?.json?.current_date || new Date().toLocaleDateString('pt-BR');\n  const userName = items[0]?.json?.user_name || \"Colaborador\";\n  const userQuestion = items[0]?.json?.chat_input || \"\";\n  const userEmail = items[0]?.json?.user_email || \"\";\n  \n  // Sanitizacao\n  const sanitizedUserName = userName.replace(/[<>\\\"']/g, '').trim();\n  const firstName = sanitizedUserName.split(' ')[0];\n  const sanitizedQuestion = userQuestion.replace(/```/g, '').trim();\n  const questionLower = sanitizedQuestion.toLowerCase();\n  \n  // === STEP 2: ANALISE DE CONTEXTO ===\n  const isGreeting = /^(oi|olá|ola|hey|bom dia|boa tarde|boa noite|e ai|eai)/i.test(questionLower);\n  const isContactQuery = /(quem|contato|email|telefone|responsável|falar com|equipe)/i.test(questionLower);\n  const isPolicyQuery = /(política|regra|procedimento|manual|prazo|direito|ferias|beneficio|banco de horas|atestado)/i.test(questionLower);\n  const isUrgent = /(urgente|emergência|crítico|imediato)/i.test(questionLower);\n  \n  // === STEP 3: LOGICA TEMPORAL ===\n  const now = new Date();\n  const hour = now.getHours();\n  const isWeekend = now.getDay() === 0 || now.getDay() === 6;\n  const isAfterHours = hour < 8 || hour > 18;\n  \n  let greeting = \"Saudações\";\n  if (hour >= 5 && hour < 12) greeting = \"Bom dia\";\n  else if (hour >= 12 && hour < 18) greeting = \"Boa tarde\";\n  else greeting = \"Boa noite\";\n\n  let availabilityNote = \"\";\n  if (isWeekend || isAfterHours) {\n    availabilityNote = \"Nota: Fora do horário comercial. RH humano responde seg-sex, 8h-18h.\";\n  }\n\n  // === STEP 4: CONSTRUCAO DO PROMPT (SEM CHAVES JSON) ===\n  const systemPrompt = `RAVENA - Assistente de RH do teste\n\nVocê é RAVENA, assistente virtual de Recursos Humanos do teste. Seu objetivo é ajudar colaboradores com dúvidas sobre políticas, benefícios e procedimentos.\n\nDADOS DA CONVERSA\nData: ${currentDate}\nColaborador: ${firstName}\nSaudação: ${greeting}\n${availabilityNote}\n\nTOM DE COMUNICAÇÃO\n- Acolhedor e profissional\n- Claro e objetivo\n- Empático sem ser exagerado\n- Use emojis com moderação quando apropriado\n\nFONTES DE INFORMAÇÃO\n1. Use a ferramenta search_rh_manual para buscar no Manual de RH\n2. Lista de contatos internos:\n${contacts}\n\nINSTRUÇÕES\n1. Analise a pergunta do colaborador\n2. Se for sobre políticas ou procedimentos: use search_rh_manual\n3. Se for sobre contatos ou equipe: consulte a lista de contatos acima\n4. Se for saudação: responda cordialmente e ofereça ajuda\n5. Se não souber: indique o contato apropriado do RH\n\nCOMO RESPONDER\nResponda de forma natural e amigável, como uma assistente de RH profissional faria.\nSeja direta e útil. Não use formatação JSON na resposta.\nApenas responda a pergunta do colaborador de forma clara e acolhedora.\n\nPergunta do colaborador: ${sanitizedQuestion}`;\n\n  // === STEP 5: RETORNO ===\n  return [{\n    json: {\n      system_prompt_final: systemPrompt,\n      _metadata: {\n        user: sanitizedUserName,\n        email: userEmail,\n        timestamp: now.toISOString(),\n        version: \"6.0\",\n        context: {\n          isGreeting,\n          isContactQuery,\n          isPolicyQuery,\n          isUrgent\n        }\n      }\n    }\n  }];\n\n} catch (error) {\n  console.error(\"Erro no processamento:\", error);\n  \n  return [{\n    json: {\n      system_prompt_final: `Você é RAVENA, assistente de RH do teste. Ocorreu um erro interno. Responda a pergunta da melhor forma possível usando as ferramentas disponíveis. Pergunta: ${items[0]?.json?.chat_input}`,\n      _error: error.message,\n      _fallback: true\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4752,
+        1408
+      ],
+      "id": "66ca64e9-3a34-4c75-adee-a440f7fb06dc",
+      "name": "Montar Prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.googleapis.com/v1/{{ $('Preparar Dados').item.json.space_name }}/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": {{ JSON.stringify($json.text_response) }}\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6144,
+        1264
+      ],
+      "id": "211261c6-913f-4905-9c36-0bc288f1b177",
+      "name": "Responder no Google Chat",
+      "credentials": {
+        "googleApi": {
+          "id": "5jWMywbgeksqZzLQ",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const aiOutput = items[0].json.output || '';\n\n// Como não pedimos JSON, a resposta vem em texto natural\n// Vamos detectar o tópico baseado em palavras-chave\n\nlet topic = 'geral';\nconst outputLower = aiOutput.toLowerCase();\n\nif (outputLower.includes('contato') || outputLower.includes('email') || outputLower.includes('equipe') || outputLower.includes('@grupoom')) {\n  topic = 'contatos';\n} else if (outputLower.includes('férias') || outputLower.includes('benefício') || outputLower.includes('banco de horas') || outputLower.includes('atestado') || outputLower.includes('manual')) {\n  topic = 'politicas';\n} else if (outputLower.includes('olá') || outputLower.includes('bom dia') || outputLower.includes('boa tarde') || outputLower.includes('boa noite') || outputLower.includes('ajudar')) {\n  topic = 'social';\n}\n\nreturn [{\n  json: {\n    text_response: aiOutput,\n    topic: topic,\n    status: 'success',\n    source: 'ai_response'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5328,
+        1408
+      ],
+      "id": "36b31cf4-281f-4759-a064-b512c3134c35",
+      "name": "Parser JSON"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-image-preview",
+        "options": {
+          "maxOutputTokens": 2048,
+          "temperature": 0.9
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        4880,
+        1632
+      ],
+      "id": "ed659eb5-751c-4fe3-a4b7-262631296e4a",
+      "name": "Google Gemini Agente",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HqMdT731KFpBl6X8",
+          "name": "Google Gemini(PaLM) Api account 7"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=rh-chat-{{ $('Preparar Dados').item.json.thread_name }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        5088,
+        1616
+      ],
+      "id": "d9feb09d-f86d-4923-aec5-038043a9e97f",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "={{ $('Preparar Dados').item.json.chat_input }}",
+        "options": {
+          "systemMessage": "={{ $json.system_prompt_final }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        5008,
+        1408
+      ],
+      "id": "0fc71baa-db49-416b-83e4-a8e3780a2f4a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "name": "search_rh_manual",
+        "description": "Search for information in the HR Manual to answer employee questions"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        5232,
+        1664
+      ],
+      "id": "1d198adc-6807-41f6-b54f-b49f7ce541d0",
+      "name": "Vector Store Tool"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AuXTNC9cR1C3W-LmKFe7Fza3K6BVpSDw21aflfajG1E",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AuXTNC9cR1C3W-LmKFe7Fza3K6BVpSDw21aflfajG1E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data": "={{ $now.format('dd/MM/yyyy HH:mm') }}",
+            "Nome Usuário": "={{ $('Preparar Dados').item.json.user_name }}",
+            "Pergunta": "={{ $('Preparar Dados').item.json.chat_input }}",
+            "Resposta": "={{ $json.text_response }}",
+            "Tópico ": "={{ $json.topic }}",
+            "Status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome Usuário",
+              "displayName": "Nome Usuário",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pergunta",
+              "displayName": "Pergunta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resposta",
+              "displayName": "Resposta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tópico ",
+              "displayName": "Tópico ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        6048,
+        1520
+      ],
+      "id": "d900d37f-cfdb-4cae-a38a-7b8b3ffb321b",
+      "name": "Log",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6XhdMEXIycCtJ0G2",
+          "name": "ADAdmin N8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "7oIaWYjLFPpLRnZ9",
+          "mode": "list",
+          "cachedResultName": "BOT LOG",
+          "cachedResultUrl": "/projects/iLHt83zGA51c2COp/datatables/7oIaWYjLFPpLRnZ9"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nome": "={{ $('Preparar Dados').item.json.user_name }}",
+            "Question": "={{ $('Preparar Dados').item.json.chat_input }}",
+            "Response": "={{ $json.text_response }}",
+            "topico": "={{ $json.topic }}",
+            "Status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Question",
+              "displayName": "Question",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Response",
+              "displayName": "Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "topico",
+              "displayName": "topico",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        5792,
+        1488
+      ],
+      "id": "c3420c3f-cce5-4e9d-aec5-32194e6a1ba9",
+      "name": "Banco de log"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "rh-manual-knowledge",
+          "mode": "list",
+          "cachedResultName": "rh-manual-knowledge"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        5120,
+        1872
+      ],
+      "id": "604aa87d-98f9-4c98-b673-e15c0048f02f",
+      "name": "Pinecone Vector Store2",
+      "credentials": {
+        "pineconeApi": {
+          "id": "cLY2Uz7IOYqi2Ltd",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        5104,
+        2064
+      ],
+      "id": "2e9b9bee-6529-46b3-94ce-2e451eaba5a3",
+      "name": "Embeddings Google Gemini3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HqMdT731KFpBl6X8",
+          "name": "Google Gemini(PaLM) Api account 7"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Busca": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File From Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {
+            "node": "Download File From Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chatbot": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook Vazio",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Mensagem Inicial Google Chat",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Preparar Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Dados": {
+      "main": [
+        [
+          {
+            "node": "Montar Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar Prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser JSON": {
+      "main": [
+        [
+          {
+            "node": "Responder no Google Chat",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Banco de log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Agente": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Parser JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store2": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini3": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "ympQzGDIQ0chbpyV",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  },
+  "versionId": "465f9ea6-233a-4ae9-b331-b630e00d6c5d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6b93d26d78f3422a2df7daf09364ceee25a1cd3223a663b1fe4533d415237602"
+  },
+  "id": "ympQzGDIQ0chbpyV",
+  "tags": []
+}

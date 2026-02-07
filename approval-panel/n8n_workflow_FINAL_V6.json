@@ -1,0 +1,2612 @@
+{
+    "name": "Painel Aprovação ",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "painel-aprovacao",
+                "responseMode": "responseNode",
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            },
+                            {
+                                "name": "Access-Control-Allow-Methods",
+                                "value": "GET, POST, OPTIONS"
+                            },
+                            {
+                                "name": "Access-Control-Allow-Headers",
+                                "value": "Content-Type, Authorization"
+                            }
+                        ]
+                    }
+                }
+            },
+            "id": "89a5b8bb-f7c4-450c-bc67-31453f5eaa39",
+            "name": "Webhook POST",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                -624,
+                208
+            ],
+            "webhookId": "painel-aprovacao-api"
+        },
+        {
+            "parameters": {
+                "httpMethod": "OPTIONS",
+                "path": "painel-aprovacao",
+                "responseMode": "responseNode",
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            },
+                            {
+                                "name": "Access-Control-Allow-Methods",
+                                "value": "GET, POST, OPTIONS"
+                            },
+                            {
+                                "name": "Access-Control-Allow-Headers",
+                                "value": "Content-Type, Authorization"
+                            }
+                        ]
+                    }
+                }
+            },
+            "id": "cors-preflight-node-id",
+            "name": "Webhook OPTIONS (CORS)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                -624,
+                60
+            ],
+            "webhookId": "painel-aprovacao-options"
+        },
+        {
+            "parameters": {
+                "respondWith": "text",
+                "responseBody": "OK",
+                "options": {}
+            },
+            "id": "cors-respond-node-id",
+            "name": "Respond CORS",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                -416,
+                60
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const webhookData = $input.first().json;\nconst query = webhookData.query || {};\nconst body = webhookData.body || {};\n// headers already checked by web server usually, but good to have\n\nconst action = query.action || body.action || 'unknown';\n\nreturn [{\n  json: {\n    action: action,\n    query: query,\n    body: body\n  }\n}];"
+            },
+            "id": "d71ffc2a-8026-4750-8a13-6aceb50cce45",
+            "name": "Parse Request",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -416,
+                208
+            ]
+        },
+        {
+            "parameters": {
+                "rules": {
+                    "values": [
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.action }}",
+                                        "rightValue": "get_stats",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "get_stats"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.action }}",
+                                        "rightValue": "get_pending",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "get_pending"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.action }}",
+                                        "rightValue": "approve",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "approve"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.action }}",
+                                        "rightValue": "reject",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "reject"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.action }}",
+                                        "rightValue": "login",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "login"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.action }}",
+                                        "rightValue": "health_check",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "health_check"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.action }}",
+                                        "rightValue": "get_all_checkings",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "get_all_checkings"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.action }}",
+                                        "rightValue": "get_all_checkings",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "get_all_checkings"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.action }}",
+                                        "rightValue": "register_user",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "register_user"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "17a225bd-039e-4c99-8847-48592d9fdbd0",
+            "name": "Router de Ações",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 3,
+            "position": [
+                -224,
+                208
+            ]
+        },
+        {
+            "parameters": {
+                "projectId": {
+                    "__rl": true,
+                    "value": "sheetsintegration-451500",
+                    "mode": "list"
+                },
+                "options": {},
+                "operation": "executeQuery",
+                "query": "\n        SELECT\n          COUNT(*) as total,\n          COUNTIF(approval_status = 'PENDENTE') as pending,\n          COUNTIF(approval_status = 'APROVADO') as approved,\n          COUNTIF(approval_status = 'REPROVADO') as rejected\n        FROM `sheetsintegration-451500.form_checking.checking_logs`\n    "
+            },
+            "id": "65ef9935-7db0-4a0c-a6a1-a6399ac5f5ec",
+            "name": "BigQuery - Get Stats",
+            "type": "n8n-nodes-base.googleBigQuery",
+            "typeVersion": 2.1,
+            "position": [
+                -16,
+                0
+            ],
+            "credentials": {
+                "googleBigQueryOAuth2Api": {
+                    "id": "hxvtFcUvIi35sayG",
+                    "name": "Google BigQuery account 6"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}",
+                "options": {}
+            },
+            "id": "011a2010-0dbf-427e-842b-60d353c2fd56",
+            "name": "Respond Stats",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                192,
+                0
+            ]
+        },
+        {
+            "parameters": {
+                "projectId": {
+                    "__rl": true,
+                    "value": "sheetsintegration-451500",
+                    "mode": "list"
+                },
+                "options": {},
+                "operation": "executeQuery",
+                "query": "\n        SELECT *\n        FROM `sheetsintegration-451500.form_checking.checking_logs`\n        WHERE approval_status = 'PENDENTE'\n        ORDER BY PARSE_TIMESTAMP('%d/%m/%Y %H:%M', data_envio) DESC\n    "
+            },
+            "id": "21ee81e4-5ff1-4665-8c31-5d20903bce3a",
+            "name": "BigQuery - Get Pending",
+            "type": "n8n-nodes-base.googleBigQuery",
+            "typeVersion": 2.1,
+            "position": [
+                -16,
+                160
+            ],
+            "credentials": {
+                "googleBigQueryOAuth2Api": {
+                    "id": "hxvtFcUvIi35sayG",
+                    "name": "Google BigQuery account 6"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const items = $input.all().map(i => i.json);\nreturn [{ json: { checkings: items } }];"
+            },
+            "id": "5344acdb-b052-4a96-a91a-c9f39f873da4",
+            "name": "Format Pending Response",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                192,
+                160
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}",
+                "options": {}
+            },
+            "id": "e333c200-cc70-44dc-b98a-4370236d72c5",
+            "name": "Respond Pending",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                384,
+                160
+            ]
+        },
+        {
+            "parameters": {
+                "projectId": {
+                    "__rl": true,
+                    "value": "sheetsintegration-451500",
+                    "mode": "list"
+                },
+                "options": {},
+                "operation": "executeQuery",
+                "query": "\n        UPDATE `sheetsintegration-451500.form_checking.checking_logs`\n        SET\n          approval_status = 'APROVADO',\n          approval_date = CURRENT_TIMESTAMP(),\n          approval_user = '{{ $json.approval_user }}'\n        WHERE id = '{{ $json.id }}'\n    "
+            },
+            "id": "e26fcc10-bdf0-4d0c-9971-72850ebca096",
+            "name": "BigQuery - Approve",
+            "type": "n8n-nodes-base.googleBigQuery",
+            "typeVersion": 2.1,
+            "position": [
+                -16,
+                304
+            ],
+            "credentials": {
+                "googleBigQueryOAuth2Api": {
+                    "id": "hxvtFcUvIi35sayG",
+                    "name": "Google BigQuery account 6"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ { \"success\": true, \"message\": \"Checking aprovado com sucesso\" } }}",
+                "options": {}
+            },
+            "id": "3952d6bd-7716-43a1-810a-9f4c47c66c25",
+            "name": "Respond Approve",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                192,
+                304
+            ]
+        },
+        {
+            "parameters": {
+                "projectId": {
+                    "__rl": true,
+                    "value": "sheetsintegration-451500",
+                    "mode": "list"
+                },
+                "options": {},
+                "operation": "executeQuery",
+                "query": "\n        SELECT *\n        FROM `sheetsintegration-451500.form_checking.checking_logs`\n        WHERE id = '{{ $json.id || $json.body.id }}'\n    "
+            },
+            "id": "46f903eb-d9e3-4d56-abd0-a835329802f2",
+            "name": "BigQuery - Get Checking Data",
+            "type": "n8n-nodes-base.googleBigQuery",
+            "typeVersion": 2.1,
+            "position": [
+                -16,
+                464
+            ],
+            "credentials": {
+                "googleBigQueryOAuth2Api": {
+                    "id": "hxvtFcUvIi35sayG",
+                    "name": "Google BigQuery account 6"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "fileFolder",
+                "searchMethod": "query",
+                "queryString": "={{ \n  const checkingData = $json;\n  const driveLink = checkingData.webViewLink || '';\n  \n  if (!driveLink.includes('/folders/')) {\n    return \"name='NOT_FOUND' and trashed=true\";\n  }\n  \n  const folderId = driveLink.split('/folders/')[1].split('?')[0];\n  return `'${folderId}' in parents and name='Historico do fornecedor' and mimeType='application/vnd.google-apps.folder' and trashed=false`;\n}}",
+                "filter": {},
+                "options": {}
+            },
+            "id": "31ed39e8-6085-4069-8da9-00d368f2f5b8",
+            "name": "Drive - Search Historico Folder",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                192,
+                464
+            ],
+            "alwaysOutputData": true,
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "1c3ApLu5B45cMjkz",
+                    "name": "Google Drive account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "item": {
+                    "value": 0
+                },
+                "options": {}
+            },
+            "id": "63c95d68-8f7c-40e1-a2e8-152a956c16ab",
+            "name": "Check Historico Exists",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                384,
+                464
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "folder",
+                "name": "Historico do fornecedor",
+                "driveId": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "My Drive"
+                },
+                "folderId": "={{ \n  const checkingData = $items('BigQuery - Get Checking Data')[0].json;\n  const driveLink = checkingData.webViewLink || '';\n  const folderId = driveLink.split('/folders/')[1].split('?')[0];\n  return folderId;\n}}",
+                "options": {}
+            },
+            "id": "ad7e4051-ba0e-4a46-a67e-83fa5a49a552",
+            "name": "Drive - Create Historico Folder",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                592,
+                560
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "1c3ApLu5B45cMjkz",
+                    "name": "Google Drive account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "name": "historicoFolderId",
+                            "value": "={{ $json.id }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "2202d50c-0a54-41ed-984d-43f8649b5def",
+            "name": "Set Historico ID",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                784,
+                464
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const webhookData = $items('Webhook POST')[0].json.body;\nconst checkingData = $items('BigQuery - Get Checking Data')[0].json;\nconst rejectionReason = webhookData.rejection_reason || '';\n\nconst observacaoTexto = `HISTÓRICO DE REPROVAÇÃO\\n` +\n  `========================\\n\\n` +\n  `PI: ${checkingData.n_pi}\\n` +\n  `Cliente: ${checkingData.cliente}\\n` +\n  `Fornecedor: ${checkingData.nome}\\n` +\n  `Data: ${new Date().toLocaleString('pt-BR', {timeZone: 'America/Sao_Paulo'})}\\n\\n` +\n  `MOTIVO DA REPROVAÇÃO:\\n` +\n  `${rejectionReason}\\n`;\n\nreturn [{\n  json: {\n    historicoFolderId: $json.historicoFolderId,\n    hasObservacao: true\n  },\n  binary: {\n    data: {\n      data: Buffer.from(observacaoTexto, 'utf-8').toString('base64'),\n      mimeType: 'text/plain',\n      fileName: `observacao_${Date.now()}.txt`\n    }\n  }\n}];"
+            },
+            "id": "dae24dad-fcfd-4e11-944e-2dcf3f9686dd",
+            "name": "Create Observacao File",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                992,
+                464
+            ]
+        },
+        {
+            "parameters": {
+                "driveId": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "My Drive"
+                },
+                "folderId": "={{ $json.historicoFolderId }}",
+                "options": {}
+            },
+            "id": "5a740812-af7c-4ada-b417-62940273a5a6",
+            "name": "Drive - Upload Observacao",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                1184,
+                464
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "1c3ApLu5B45cMjkz",
+                    "name": "Google Drive account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $binary.pdf_file !== undefined }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "boolean",
+                                "operation": "true",
+                                "singleValue": true
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "b2411b12-b4ae-4265-a9df-66857a86d5a4",
+            "name": "Check PDF Exists",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                1392,
+                464
+            ]
+        },
+        {
+            "parameters": {
+                "driveId": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "My Drive"
+                },
+                "folderId": "={{ $items('Set Historico ID')[0].json.historicoFolderId }}",
+                "options": {}
+            },
+            "id": "4aa91648-3b77-4c30-9571-d26036a5b540",
+            "name": "Drive - Upload PDF",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                1584,
+                400
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "1c3ApLu5B45cMjkz",
+                    "name": "Google Drive account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "name": "pdfLink",
+                            "value": "={{ $json.webViewLink || '' }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "7b4ace55-255c-4a87-9b6d-689d7d442933",
+            "name": "Set PDF Link",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                1792,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "name": "pdfLink",
+                            "value": "",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "8ed98bff-1de2-4b2c-a534-48fc6bb01f3e",
+            "name": "Set No PDF",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                1792,
+                512
+            ]
+        },
+        {
+            "parameters": {
+                "mode": "combine",
+                "combineBy": "combineAll",
+                "options": {}
+            },
+            "id": "b7a3421e-05b1-4bde-b26e-34a96b512a5f",
+            "name": "Merge PDF Paths",
+            "type": "n8n-nodes-base.merge",
+            "typeVersion": 3,
+            "position": [
+                1984,
+                464
+            ]
+        },
+        {
+            "parameters": {
+                "projectId": {
+                    "__rl": true,
+                    "value": "sheetsintegration-451500",
+                    "mode": "list"
+                },
+                "options": {},
+                "operation": "executeQuery",
+                "query": "\n        UPDATE `sheetsintegration-451500.form_checking.checking_logs`\n        SET\n          approval_status = 'REPROVADO',\n          rejection_reason = '{{ $json.rejection_reason || $json.body.reason }}',\n          rejection_count = IFNULL(rejection_count, 0) + 1,\n          approval_user = '{{ $json.approval_user || $json.body.approval_user }}'\n        WHERE id = '{{ $json.id || $json.body.id }}'\n    "
+            },
+            "id": "292e566c-b926-4ee7-a6ed-f42aff66cd0d",
+            "name": "BigQuery - Update Rejection",
+            "type": "n8n-nodes-base.googleBigQuery",
+            "typeVersion": 2.1,
+            "position": [
+                2192,
+                464
+            ],
+            "credentials": {
+                "googleBigQueryOAuth2Api": {
+                    "id": "hxvtFcUvIi35sayG",
+                    "name": "Google BigQuery account 6"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fromEmail": "checking@automation-api.com",
+                "toEmail": "={{ $items('BigQuery - Get Checking Data')[0].json.email }}",
+                "subject": "=Checking Reprovado - PI {{ $items('BigQuery - Get Checking Data')[0].json.n_pi }}",
+                "html": "={{ \n  const checkingData = $items('BigQuery - Get Checking Data')[0].json;\n  const webhookData = $items('Webhook POST')[0].json.body;\n  const reason = webhookData.rejection_reason || '';\n  const pdfLink = $items('Merge PDF Paths')[0].json.pdfLink || '';\n  const rejectionCount = (checkingData.rejection_count || 0) + 1;\n  \n  let html = `<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Inter, Arial, sans-serif; margin: 0; padding: 0; background: #f1f5f9; }\n    .container { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 16px; overflow: hidden; }\n    .rainbow { height: 4px; background: linear-gradient(90deg, #ef4444, #f59e0b, #facc15, #10b981, #06b6d4, #3b82f6, #8b5cf6); }\n    .header { background: #1e293b; color: white; padding: 40px; text-center; }\n    .content { padding: 40px; }\n    .alert { background: #fef2f2; border-left: 4px solid #ef4444; padding: 20px; margin: 20px 0; border-radius: 8px; }\n    .footer { background: #1e293b; color: #94a3b8; padding: 30px; text-align: center; font-size: 12px; }\n  </style>\n</head>\n<body>\n  <div class=\"rainbow\"></div>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>⚠️ Checking Reprovado</h1>\n      <p>Tentativa ${rejectionCount}</p>\n    </div>\n    <div class=\"content\">\n      <div class=\"alert\">\n        <h3>Ação Necessária</h3>\n        <p>O checking foi analisado e <strong>não foi aprovado</strong>.</p>\n      </div>\n      <h3>Detalhes:</h3>\n      <p><strong>PI:</strong> ${checkingData.n_pi}</p>\n      <p><strong>Cliente:</strong> ${checkingData.cliente}</p>\n      <h3>Motivo da Reprovação:</h3>\n      <div style=\"background:#f8fafc;padding:15px;border-radius:8px;\">\n        <p style=\"white-space:pre-wrap;\">${reason}</p>\n      </div>`;\n  \n  if (pdfLink) {\n    html += `<div style=\"background:#eff6ff;padding:15px;margin:20px 0;border-radius:8px;\">\n      <p><strong>📎 Documento Anexado:</strong></p>\n      <a href=\"${pdfLink}\" style=\"color:#2563eb;\">Ver Documento</a>\n    </div>`;\n  }\n  \n  html += `</div>\n    <div class=\"footer\">\n      <p><strong>Hub de Automação</strong></p>\n      <p>checking@automation-api.com</p>\n    </div>\n  </div>\n  <div class=\"rainbow\"></div>\n</body>\n</html>`;\n  \n  return html;\n}}",
+                "options": {
+                    "appendAttribution": false
+                }
+            },
+            "id": "ca791493-72e4-405d-987f-7da953fd0595",
+            "name": "Email - Rejection Notification",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 2.1,
+            "position": [
+                2384,
+                464
+            ],
+            "webhookId": "5d4d9bcc-3140-4bbf-8ab0-fbd1bcea96ce",
+            "credentials": {
+                "smtp": {
+                    "id": "wZ8MyCrTRJkSUY1G",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ { \"success\": true, \"message\": \"Checking reprovado e fornecedor notificado\" } }}",
+                "options": {}
+            },
+            "id": "5876d5e3-6894-4ffa-a0f5-ccd4055aa65d",
+            "name": "Respond Rejection",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                2592,
+                464
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const body = $input.first().json.body;\nconst email = body.email;\nconst password = body.password;\n\n// MOCK Login Logic - Replace with Real DB Check\nif (email && password && password.length >= 6) {\n  return [{\n    json: {\n      success: true,\n      user: {\n        name: 'Usuário', \n        email: email,\n        avatar: 'https://ui.shadcn.com/avatars/01.png',\n        role: 'approver'\n      }\n    }\n  }];\n} else {\n  return [{\n    json: {\n      success: false,\n      error: 'Credenciais inválidas ou senha incorreta.'\n    }\n  }];\n}"
+            },
+            "id": "0258d99c-e3a1-4277-bf30-584768395567",
+            "name": "Handle Login",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -16,
+                -176
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}",
+                "options": {}
+            },
+            "id": "673f3246-248c-4a25-a7b3-2947171542f6",
+            "name": "Respond Login",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                192,
+                -176
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "return [{\n  json: {\n    status: 'online',\n    timestamp: new Date().toISOString(),\n    services: {\n      bigquery: 'connected',\n      drive: 'connected',\n      smtp: 'connected'\n    }\n  }\n}];"
+            },
+            "id": "c4d08e5e-64d1-4122-b258-7e3f48256338",
+            "name": "Handle Health",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -16,
+                -320
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}",
+                "options": {}
+            },
+            "id": "c1f200d7-9e4a-429a-9121-6a2c75a46356",
+            "name": "Respond Health",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                192,
+                -320
+            ]
+        },
+        {
+            "parameters": {
+                "projectId": {
+                    "__rl": true,
+                    "value": "sheetsintegration-451500",
+                    "mode": "list"
+                },
+                "options": {},
+                "operation": "executeQuery",
+                "query": "\n    SELECT *\n    FROM `sheetsintegration-451500.form_checking.checking_logs`\n    ORDER BY PARSE_TIMESTAMP('%d/%m/%Y %H:%M', data_envio) DESC\n    LIMIT 500\n"
+            },
+            "id": "bq-get-all-checkings-auto-generated",
+            "name": "BigQuery - Get All Checkings",
+            "type": "n8n-nodes-base.googleBigQuery",
+            "typeVersion": 2.1,
+            "position": [
+                200,
+                600
+            ],
+            "credentials": {
+                "googleBigQueryOAuth2Api": {
+                    "id": "hxvtFcUvIi35sayG",
+                    "name": "Google BigQuery account 6"
+                }
+            }
+        },
+        {
+            "id": "respond-all-checkings-auto",
+            "name": "Respond All Checkings",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                400,
+                600
+            ],
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ { checkings: $input.all().map(i => i.json) } }}",
+                "options": {}
+            }
+        },
+        {
+            "parameters": {
+                "projectId": {
+                    "__rl": true,
+                    "value": "sheetsintegration-451500",
+                    "mode": "list"
+                },
+                "options": {},
+                "operation": "executeQuery",
+                "query": "\n    SELECT *\n    FROM `sheetsintegration-451500.form_checking.checking_logs`\n    ORDER BY PARSE_TIMESTAMP('%d/%m/%Y %H:%M', data_envio) DESC\n    LIMIT 500\n"
+            },
+            "id": "bq-get-all-checkings-auto-generated",
+            "name": "BigQuery - Get All Checkings",
+            "type": "n8n-nodes-base.googleBigQuery",
+            "typeVersion": 2.1,
+            "position": [
+                200,
+                600
+            ],
+            "credentials": {
+                "googleBigQueryOAuth2Api": {
+                    "id": "hxvtFcUvIi35sayG",
+                    "name": "Google BigQuery account 6"
+                }
+            }
+        },
+        {
+            "id": "respond-all-checkings-auto",
+            "name": "Respond All Checkings",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                400,
+                600
+            ],
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ { checkings: $input.all().map(i => i.json) } }}",
+                "options": {}
+            }
+        },
+        {
+            "parameters": {
+                "projectId": {
+                    "__rl": true,
+                    "value": "sheetsintegration-451500",
+                    "mode": "list"
+                },
+                "operation": "executeQuery",
+                "query": "INSERT INTO `sheetsintegration-451500.form_checking.users` (id, name, email, password_hash, role, status, created_at)\nVALUES (GENERATE_UUID(), '{{ $json.body.name }}', '{{ $json.body.email }}', '{{ $json.body.password }}', 'viewer', 'active', CURRENT_TIMESTAMP())"
+            },
+            "id": "bq-register-user",
+            "name": "BigQuery - Register User",
+            "type": "n8n-nodes-base.googleBigQuery",
+            "typeVersion": 2,
+            "position": [
+                400,
+                800
+            ],
+            "credentials": {
+                "googleBigQueryOAuth2Api": {
+                    "id": "hxvtFcUvIi35sayG",
+                    "name": "Google BigQuery account 6"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "projectId": {
+                    "__rl": true,
+                    "value": "sheetsintegration-451500",
+                    "mode": "list"
+                },
+                "operation": "executeQuery",
+                "query": "INSERT INTO `sheetsintegration-451500.form_checking.audit_logs` (id, timestamp, user_email, action, details, ip_address)\nVALUES (GENERATE_UUID(), CURRENT_TIMESTAMP(), '{{ $json.body.email }}', 'REGISTER_USER', JSON_stringify($json.body), '{{ $json.headers[\"x-forwarded-for\"] || \"unknown\" }}')"
+            },
+            "id": "bq-audit-log",
+            "name": "BigQuery - Audit Log",
+            "type": "n8n-nodes-base.googleBigQuery",
+            "typeVersion": 2,
+            "position": [
+                600,
+                800
+            ],
+            "credentials": {
+                "googleBigQueryOAuth2Api": {
+                    "id": "hxvtFcUvIi35sayG",
+                    "name": "Google BigQuery account 6"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ { success: true, message: \"Usuário registrado com sucesso\" } }}",
+                "options": {}
+            },
+            "id": "respond-register",
+            "name": "Respond Register",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                800,
+                800
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const item = $input.item;\n\n// Tenta localizar os dados onde quer que eles estejam (raiz ou body)\nconst body = item.json.body || item.json; \nconst binary = item.binary || {};\nconst erros = [];\n\n// Funções auxiliares\nfunction sanitize(input, maxLength = 500) {\n  if (!input && input !== 0) return '';\n  return String(input).trim().replace(/[<>\"'`]/g, '').substring(0, maxLength);\n}\n\n// Mapeamento seguro dos campos\nconst nome = sanitize(body.nome, 200);\nconst email = sanitize(body.email, 254);\nconst n_pi = sanitize(body.n_pi, 50);\nconst cliente = sanitize(body.cliente, 200);\nconst veiculo = sanitize(body.veiculo, 200);\nconst meio = sanitize(body.meio, 10);\nconst observacoes = sanitize(body.observacoes, 2000);\nconst uploadMethod = body.upload_method || 'binary';\n\n// --- ALTERAÇÃO AQUI: Captura do is_complement ---\n// Converte string \"true\"/\"false\" para boolean real\nconst is_complement = String(body.is_complement).toLowerCase() === 'true';\n\n// Validações\nif (!nome || nome.length < 3) erros.push('Nome inválido ou vazio');\nif (!cliente) erros.push('Cliente não informado');\nif (!veiculo) erros.push('Veículo não informado');\n\n// Validação de Binário\nconst temBinario = Object.keys(binary).length > 0;\nif (uploadMethod === 'binary' && !temBinario) {\n  erros.push(`Arquivo não recebido. (Chaves encontradas: ${Object.keys(binary).join(', ')})`);\n}\n\n// Monta o objeto de saída\nitem.json.sanitizedData = {\n  nome, email, n_pi, cliente, veiculo, meio, observacoes, \n  is_complement // Adicionado ao objeto final\n};\nitem.json.uploadMethod = uploadMethod;\n\n// INFORMAÇÃO DE DEBUG\nitem.json.debugInfo = {\n  camposRecebidos: Object.keys(body),\n  arquivosRecebidos: Object.keys(binary),\n  actionRecebida: body.action,\n  isComplement: is_complement\n};\n\nconst submissionId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;\nitem.json.submissionId = submissionId;\n\n// Define resultado\nitem.json.validationResult = erros.length > 0\n  ? { success: false, message: erros.join('; '), statusCode: 400 }\n  : { success: true, message: 'Validação OK' };\n\nreturn [item];"
+            },
+            "id": "0939c4f2-f532-493f-adc8-e2433610f4bf",
+            "name": "Validar Submissao",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                784,
+                1820
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "loose"
+                    },
+                    "conditions": [
+                        {
+                            "id": "validacao-ok",
+                            "leftValue": "={{ Boolean($json.validationResult?.success) }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "boolean",
+                                "operation": "true",
+                                "singleValue": true
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "looseTypeValidation": true,
+                "options": {}
+            },
+            "id": "f55939ba-db1c-40e0-90bd-ce06e5687ee2",
+            "name": "Check Validacao",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.2,
+            "position": [
+                1008,
+                1820
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ { \"success\": false, \"message\": $json.validationResult.message || \"Erro na validação\" } }}",
+                "options": {
+                    "responseCode": "={{ $json.validationResult.statusCode || 400 }}"
+                }
+            },
+            "id": "cb354a0e-23c4-457b-a17f-b02568c7febb",
+            "name": "Responder Erro Validacao",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1232,
+                1948
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "check-drive-link",
+                            "leftValue": "={{ $json.uploadMethod }}",
+                            "rightValue": "drive_link",
+                            "operator": {
+                                "type": "string",
+                                "operation": "equals"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "78e595e0-9680-45c9-96af-c26cd4a7ff1e",
+            "name": "Check Metodo Upload",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                1232,
+                1740
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const submissionData = $items('Validar Submissao')[0].json;\nconst body = submissionData.body;\n\nreturn [{\n  json: {\n    n_pi: body.n_pi || 'N/A',\n    cliente: body.cliente || 'N/A',\n    veiculo: body.veiculo || 'N/A',\n    nome: body.nome || 'N/A',\n    email: body.email || 'N/A',\n    telefone: body.telefone || 'N/A',\n    meio: body.meio || 'N/A',\n    observacoes: body.observacoes || '',\n    totalArquivos: 'Link Drive Externo',\n    uploadMethod: 'drive_link',\n    webViewLink: body.drive_link || ''\n  }\n}];"
+            },
+            "id": "3aeca274-0b1a-4eec-9b7c-8d45f20145b9",
+            "name": "Preparar Log Link Drive",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1648,
+                1436
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "fileFolder",
+                "searchMethod": "query",
+                "queryString": "={{ \"name='\" + $items('Validar Submissao')[0].json.sanitizedData.cliente.trim().toUpperCase() + \"' and mimeType='application/vnd.google-apps.folder' and '1OEL4MtYKd5Tg-ZOmsIRG9RQkvfX-xs_s' in parents and trashed=false\" }}",
+                "filter": {},
+                "options": {}
+            },
+            "id": "e81095ad-a99f-4868-8dd6-8b205e708a44",
+            "name": "Buscar Pasta Cliente",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                1456,
+                1820
+            ],
+            "alwaysOutputData": true,
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "1c3ApLu5B45cMjkz",
+                    "name": "Google Drive account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "pasta-existe",
+                            "leftValue": "={{ $json.id != null }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "boolean",
+                                "operation": "true",
+                                "singleValue": true
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "ec0d8d68-c50f-4cb0-bafe-596a0f34986b",
+            "name": "Pasta Cliente Existe",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                1664,
+                1820
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "folder",
+                "name": "={{ $items('Validar Submissao')[0].json.sanitizedData.cliente.toUpperCase() }}",
+                "driveId": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "My Drive"
+                },
+                "folderId": {
+                    "__rl": true,
+                    "value": "1OEL4MtYKd5Tg-ZOmsIRG9RQkvfX-xs_s",
+                    "mode": "list"
+                },
+                "options": {}
+            },
+            "id": "1fecb52d-a54a-4783-b03e-a1f1e76ec976",
+            "name": "Criar Pasta Cliente",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                1888,
+                1948
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "1c3ApLu5B45cMjkz",
+                    "name": "Google Drive account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "set-folder-id",
+                            "name": "clientFolderId",
+                            "value": "={{ $json.id }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "6f8e76b7-b152-49b3-98e0-763d484cfabc",
+            "name": "Definir ID Pasta Cliente",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                2112,
+                1820
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "folder",
+                "name": "={{ 'PI-' + $items('Validar Submissao')[0].json.sanitizedData.n_pi.replace(/[^a-zA-Z0-9-_]/g, '') + '_' + $now.toFormat('yyyy/MM/dd HH:mm:ss') }}",
+                "driveId": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "My Drive"
+                },
+                "folderId": {
+                    "__rl": true,
+                    "value": "1OEL4MtYKd5Tg-ZOmsIRG9RQkvfX-xs_s",
+                    "mode": "list"
+                },
+                "options": {}
+            },
+            "id": "0a6f7e3f-945e-4202-ab84-ea5d7f99ca14",
+            "name": "Criar Pasta PI",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                2576,
+                1916
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "1c3ApLu5B45cMjkz",
+                    "name": "Google Drive account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const submissionItem = $items('Validar Submissao')[0];\nconst piFolderId = $json.id;\nconst binary = submissionItem.binary || {};\nconst arquivos = [];\n\nlet totalArquivos = 0;\n\nfor (const key in binary) {\n  totalArquivos++;\n  arquivos.push({\n    json: {\n      ...submissionItem.json,\n      piFolderId: piFolderId,\n      nomeArquivoOriginal: binary[key].fileName || `arquivo_${totalArquivos}`,\n      mimeType: binary[key].mimeType || 'application/octet-stream',\n      totalArquivos: 0\n    },\n    binary: {\n      data: binary[key]\n    }\n  });\n}\n\narquivos.forEach(item => {\n  item.json.totalArquivos = totalArquivos;\n});\n\nreturn arquivos.length > 0 ? arquivos : [{ json: { skipUpload: true, piFolderId, totalArquivos: 0 } }];"
+            },
+            "id": "549afedd-56c3-404e-b705-864f098a695d",
+            "name": "Separar Arquivos Binarios",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                2992,
+                1708
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "has-files",
+                            "leftValue": "={{ !$json.skipUpload }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "boolean",
+                                "operation": "true",
+                                "singleValue": true
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "ebb67f6e-15f7-4beb-9fc6-826820ee6766",
+            "name": "Check Tem Arquivos",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                3216,
+                1708
+            ]
+        },
+        {
+            "parameters": {
+                "driveId": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "My Drive"
+                },
+                "folderId": "={{ $json.piFolderId }}",
+                "options": {}
+            },
+            "id": "f10e0b42-449a-4f02-b781-cf87c15c0def",
+            "name": "Upload Arquivo Drive",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                3472,
+                1676
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "1c3ApLu5B45cMjkz",
+                    "name": "Google Drive account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const submissionItem = $items('Validar Submissao')[0];\nconst piFolderId = $items('Dados Pasta PI')[0].json.id;\nconst observacoes = submissionItem.json.sanitizedData.observacoes;\n\nif (observacoes && observacoes.trim() !== '') {\n  const textoObservacao = `OBSERVAÇÕES DO CHECKING\\n` +\n    `========================\\n\\n` +\n    `PI: ${submissionItem.json.sanitizedData.n_pi}\\n` +\n    `Cliente: ${submissionItem.json.sanitizedData.cliente}\\n` +\n    `Data: ${new Date().toLocaleString('pt-BR')}\\n\\n` +\n    `OBSERVAÇÕES:\\n` +\n    `${observacoes}\\n`;\n  \n  return [{\n    json: {\n      piFolderId: piFolderId,\n      hasObservacoes: true\n    },\n    binary: {\n      data: {\n        data: Buffer.from(textoObservacao, 'utf-8').toString('base64'),\n        mimeType: 'text/plain',\n        fileName: 'observacoes.txt'\n      }\n    }\n  }];\n}\n\nreturn [{ json: { hasObservacoes: false, piFolderId: piFolderId } }];"
+            },
+            "id": "77e4c836-5e4a-422f-a689-2962b9eabff1",
+            "name": "Gerar Arquivo Observacao",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                2992,
+                1948
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "has-obs",
+                            "leftValue": "={{ $json.hasObservacoes }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "boolean",
+                                "operation": "true",
+                                "singleValue": true
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "0114fbd7-39fa-4e66-8c5d-72d3b8eafa95",
+            "name": "Check Tem Observacao",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                3216,
+                1948
+            ]
+        },
+        {
+            "parameters": {
+                "driveId": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "My Drive"
+                },
+                "folderId": "={{ $json.piFolderId }}",
+                "options": {}
+            },
+            "id": "959480f6-7a86-4e8a-82c5-d9e07cb0adf8",
+            "name": "Upload Observacao Drive",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                3472,
+                1916
+            ],
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "1c3ApLu5B45cMjkz",
+                    "name": "Google Drive account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "mode": "combine",
+                "combineBy": "combineAll",
+                "options": {}
+            },
+            "id": "569ecd7f-440f-4380-a127-847f9f0d050d",
+            "name": "Aguardar Todos Uploads",
+            "type": "n8n-nodes-base.merge",
+            "typeVersion": 3.2,
+            "position": [
+                3696,
+                1820
+            ],
+            "alwaysOutputData": true
+        },
+        {
+            "parameters": {
+                "jsCode": "const submissionData = $items('Validar Submissao')[0].json;\nconst body = submissionData.body;\nconst uploadResults = $input.all();\n\nlet driveLink = '';\nfor (const item of uploadResults) {\n    if (item.json.webViewLink) {\n        driveLink = item.json.webViewLink;\n        break;\n    }\n}\n\nreturn [{\n  json: {\n    n_pi: body.n_pi || 'N/A',\n    cliente: body.cliente || 'N/A',\n    veiculo: body.veiculo || 'N/A',\n    nome: body.nome || 'N/A',\n    email: body.email || 'N/A',\n    telefone: body.telefone || 'N/A',\n    meio: body.meio || 'N/A',\n    observacoes: body.observacoes || '',\n    totalArquivos: uploadResults.length,\n    uploadMethod: 'binary_upload',\n    webViewLink: driveLink,\n    submissionId: submissionData.submissionId\n  }\n}];"
+            },
+            "id": "8c761f86-0729-4a55-a262-3f7c73ed8dea",
+            "name": "Preparar Log Binary",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                3920,
+                1820
+            ]
+        },
+        {
+            "parameters": {},
+            "id": "af58a028-93ee-4dfa-ad1d-a908d9243a86",
+            "name": "Unificar Logs",
+            "type": "n8n-nodes-base.merge",
+            "typeVersion": 3.2,
+            "position": [
+                4096,
+                1452
+            ],
+            "alwaysOutputData": true
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "projectId": {
+                    "__rl": true,
+                    "value": "sheetsintegration-451500",
+                    "mode": "list",
+                    "cachedResultName": "SheetsIntegration",
+                    "cachedResultUrl": "https://console.cloud.google.com/bigquery?project=sheetsintegration-451500"
+                },
+                "datasetId": {
+                    "__rl": true,
+                    "value": "form_checking",
+                    "mode": "list",
+                    "cachedResultName": "form_checking"
+                },
+                "tableId": {
+                    "__rl": true,
+                    "value": "checking_logs",
+                    "mode": "list",
+                    "cachedResultName": "checking_logs"
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.googleBigQuery",
+            "typeVersion": 2.1,
+            "position": [
+                4336,
+                1708
+            ],
+            "id": "b1b7d2e8-87b2-4fdb-8443-ea367ecd445a",
+            "name": "Registrar Log BigQuery",
+            "credentials": {
+                "googleBigQueryOAuth2Api": {
+                    "id": "hxvtFcUvIi35sayG",
+                    "name": "Google BigQuery account 6"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fromEmail": "checking@automation-api.com",
+                "toEmail": "checking@automation-api.com",
+                "subject": "=NOVO CHECKING - PI {{ $items(\"Unificar Logs\")[0].json.n_pi }} - {{ $items(\"Unificar Logs\")[0].json.cliente }}",
+                "html": "=<!DOCTYPE html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><title>Novo Checking Recebido</title></head><body><h1>Novo Checking Recebido</h1><p><strong>PI:</strong> {{ $items(\"Unificar Logs\")[0].json.n_pi }}</p><p><strong>Cliente:</strong> {{ $items(\"Unificar Logs\")[0].json.cliente }}</p><p><strong>Veículo:</strong> {{ $items(\"Unificar Logs\")[0].json.veiculo }}</p><p><strong>Enviado por:</strong> {{ $items(\"Unificar Logs\")[0].json.nome }}</p><p><a href=\"{{ $items(\"Unificar Logs\")[0].json.webViewLink }}\">Acessar Arquivos no Drive</a></p></body></html>",
+                "options": {
+                    "appendAttribution": false
+                }
+            },
+            "id": "5e524a0d-956d-4ac8-bff2-03e6f52780e1",
+            "name": "Email Interno",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 2.1,
+            "position": [
+                4560,
+                1580
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "wZ8MyCrTRJkSUY1G",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fromEmail": "checking@automation-api.com",
+                "toEmail": "={{ $items(\"Unificar Logs\")[0].json.email }}",
+                "subject": "=Comprovante de Recebimento de Checking - PI {{ $items(\"Unificar Logs\")[0].json.n_pi }}",
+                "html": "=<!DOCTYPE html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><title>Comprovante de Recebimento</title></head><body><h1>Confirmação de Envio</h1><p>Prezado(a) <strong>{{ $items(\"Unificar Logs\")[0].json.nome }}</strong>,</p><p>Seus arquivos foram recebidos com sucesso.</p><p><strong>PI:</strong> {{ $items(\"Unificar Logs\")[0].json.n_pi }}</p><p><strong>Cliente:</strong> {{ $items(\"Unificar Logs\")[0].json.cliente }}</p><p><strong>Arquivos:</strong> {{ $items(\"Unificar Logs\")[0].json.totalArquivos }}</p></body></html>",
+                "options": {
+                    "appendAttribution": false
+                }
+            },
+            "id": "7640bb10-d32c-4a05-8b23-2a49db88755d",
+            "name": "Email Fornecedor",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 2.1,
+            "position": [
+                4560,
+                1788
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "wZ8MyCrTRJkSUY1G",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ {\n  \"success\": true,\n  \"message\": \"Checking enviado com sucesso! Você receberá uma confirmação por e-mail.\",\n  \"data\": {\n    \"pi\": $items(\"Unificar Logs\")[0].json.n_pi,\n    \"cliente\": $items(\"Unificar Logs\")[0].json.cliente,\n    \"totalArquivos\": $items(\"Unificar Logs\")[0].json.totalArquivos\n  }\n} }}",
+                "options": {}
+            },
+            "id": "77f25444-4a06-4e60-8051-f09630029d21",
+            "name": "Responder Sucesso",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                4800,
+                1708
+            ]
+        },
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "CheckingCentral",
+                "responseMode": "responseNode",
+                "options": {
+                    "rawBody": false,
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "X-Content-Type-Options",
+                                "value": "nosniff"
+                            },
+                            {
+                                "name": "X-Frame-Options",
+                                "value": " DENY"
+                            },
+                            {
+                                "name": "X-XSS-Protection",
+                                "value": "1; mode=block"
+                            },
+                            {
+                                "name": "Strict-Transport-Security",
+                                "value": "max-age=31536000"
+                            }
+                        ]
+                    }
+                }
+            },
+            "id": "8004b8c0-c2dc-40b2-abf3-019b8fe24e0f",
+            "name": "Webhook Entrada",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                368,
+                1740
+            ],
+            "webhookId": "7afcc1d3-f116-4842-8ad1-4adad3c5677b"
+        },
+        {
+            "parameters": {
+                "jsCode": "const body = $json.body || {};\nconst nPi = (body.n_pi || '').trim();\nconst cnpj = (body.cnpj || '').trim();\nconst nProjeto = (body.n_projeto || '').trim();\n\nlet queryType = '';\nlet searchValue = '';\nlet sqlQuery = '';\n\nif (nPi) {\n  queryType = 'pi';\n  searchValue = nPi.replace(/[^a-zA-Z0-9-_]/g, '');\n  sqlQuery = `SELECT DISTINCT\n    p.PEDIDO AS n_pi,\n    p.CLIENTE AS cliente,\n    p.VEICULO AS veiculo,\n    DATE_FORMAT(p.PERIODO, '%Y-%m') AS periodo,\n    p.CAMPANHA AS campanha,\n    p.PRODUTO AS produto,\n    p.MEIO AS meio,\n    p.PLANILHA AS planilha\n  FROM cliente_automation_api.pi01 p\n  WHERE p.PEDIDO = '${searchValue}'\n    AND p.PEDIDO IS NOT NULL\n    AND p.PEDIDO != ''\n  LIMIT 1`;\n} else if (cnpj) {\n  queryType = 'cnpj';\n  searchValue = cnpj.replace(/[^0-9]/g, '');\n  sqlQuery = `SELECT DISTINCT\n    p.PEDIDO AS n_pi,\n    p.CLIENTE AS cliente,\n    p.VEICULO AS veiculo,\n    f.CGC AS cnpj,\n    DATE_FORMAT(p.PERIODO, '%Y-%m') AS periodo,\n    p.CAMPANHA AS campanha,\n    p.PRODUTO AS produto,\n    p.MEIO AS meio\n  FROM cliente_automation_api.pi01 p\n  LEFT JOIN cliente_automation_api.for01 f ON TRIM(UPPER(p.VEICULO)) = TRIM(UPPER(f.NOME))\n  WHERE REPLACE(REPLACE(REPLACE(f.CGC, '.', ''), '/', ''), '-', '') = '${searchValue}'\n    AND p.PEDIDO IS NOT NULL\n    AND p.PEDIDO != ''\n    AND p.PERIODO >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)\n  ORDER BY p.PERIODO DESC, p.PEDIDO\n  LIMIT 200`;\n} else if (nProjeto) {\n  queryType = 'projeto';\n  searchValue = nProjeto.replace(/[^a-zA-Z0-9-_ ]/g, '');\n  sqlQuery = `SELECT DISTINCT\n    p.PEDIDO AS n_pi,\n    p.CLIENTE AS cliente,\n    p.VEICULO AS veiculo,\n    DATE_FORMAT(p.PERIODO, '%Y-%m') AS periodo,\n    p.CAMPANHA AS campanha,\n    p.PRODUTO AS produto,\n    p.MEIO AS meio\n  FROM cliente_automation_api.pi01 p\n  WHERE p.CAMPANHA LIKE '%${searchValue}%'\n    AND p.PEDIDO IS NOT NULL\n    AND p.PEDIDO != ''\n    AND p.PERIODO >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)\n  ORDER BY p.PERIODO DESC, p.PEDIDO\n  LIMIT 200`;\n} else {\n  return [{ json: { error: 'Nenhum parâmetro de busca fornecido' } }];\n}\n\nreturn [{\n  json: {\n    queryType,\n    searchValue,\n    sqlQuery\n  }\n}];"
+            },
+            "id": "3d5dc7a4-c6cd-477c-8f7f-62394e738e73",
+            "name": "Preparar Query MySQL",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                752,
+                1596
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "={{ $json.sqlQuery }}",
+                "options": {}
+            },
+            "id": "32c18b70-10e8-45f5-85f8-14db50ff2ed4",
+            "name": "Executar Busca MySQL",
+            "type": "n8n-nodes-base.mySql",
+            "typeVersion": 2.5,
+            "position": [
+                960,
+                1596
+            ],
+            "credentials": {
+                "mySql": {
+                    "id": "lkXjbPswUmddyXqw",
+                    "name": "MySQL account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "check-ooh",
+                            "leftValue": "={{ /^(OD|FL)$/.test($json.meio) }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "boolean",
+                                "operation": "true",
+                                "singleValue": true
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "ooh-check-001",
+            "name": "Check Meio OOH",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                1152,
+                1596
+            ],
+            "notes": "Verifica se meio é OD (Outdoor) ou FL (Frontlight) para buscar endereços"
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "=SELECT ob.campos AS enderecos_raw FROM cliente_grupoom.pi01x AS ob WHERE ob.planilha = '{{ $items('Executar Busca MySQL')[0].json.planilha }}' AND ob.tr = 3 LIMIT 1",
+                "options": {}
+            },
+            "id": "ooh-buscar-end-001",
+            "name": "MySQL Buscar Enderecos OOH",
+            "type": "n8n-nodes-base.mySql",
+            "typeVersion": 2.5,
+            "position": [
+                1360,
+                1500
+            ],
+            "alwaysOutputData": true,
+            "credentials": {
+                "mySql": {
+                    "id": "lkXjbPswUmddyXqw",
+                    "name": "MySQL account"
+                }
+            },
+            "notes": "Busca endereços da tabela pi01x onde tr=3"
+        },
+        {
+            "parameters": {
+                "jsCode": "// Parse endereços OOH\nconst piData = $items('Executar Busca MySQL')[0].json;\nconst enderecosRaw = $json.enderecos_raw || '';\n\n// Separa por quebra de linha\nconst lines = enderecosRaw.split('\\n').map(l => l.trim()).filter(l => l.length > 0);\n\nconst enderecos = lines.map((endereco, index) => {\n  const id = `end_${String(index + 1).padStart(3, '0')}`;\n  \n  // Gera slug para nome da pasta\n  const words = endereco\n    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n    .replace(/[^a-zA-Z0-9\\s]/g, '')\n    .split(/\\s+/)\n    .slice(0, 3);\n  \n  const pasta_slug = `Endereco_${String(index + 1).padStart(3, '0')}_${words.join('_')}`;\n  \n  return {\n    id,\n    endereco,\n    pasta_slug: pasta_slug.substring(0, 50),\n    campos_upload: {\n      foto_perto: { field_name: `foto_perto_${id}`, required: true },\n      foto_longe: { field_name: `foto_longe_${id}`, required: true }\n    }\n  };\n});\n\nreturn [{\n  json: {\n    success: true,\n    ...piData,\n    requer_enderecos: enderecos.length > 0,\n    enderecos: enderecos,\n    total_enderecos: enderecos.length\n  }\n}];"
+            },
+            "id": "ooh-parse-end-001",
+            "name": "Parse Enderecos OOH",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1568,
+                1500
+            ],
+            "notes": "Transforma texto de endereços em array JSON com IDs e slugs para pastas"
+        },
+        {
+            "parameters": {
+                "jsCode": "const rows = $input.all().map(i => i.json)\n\nif (!rows.length) {\n  return [{\n    json: {\n      success: false,\n      message: 'Nenhum PI encontrado'\n    }\n  }]\n}\n\nconst queryType = $items('Preparar Query MySQL')[0].json.queryType\n\nif (queryType === 'cnpj') {\n  return [{\n    json: {\n      success: true,\n      pis: rows.map(r => ({\n        n_pi: r.n_pi,\n        cliente: r.cliente,\n        veiculo: r.veiculo,\n        campanha: r.campanha,\n        produto: r.produto,\n        meio: r.meio,\n        periodo: r.periodo,\n        cnpj: r.cnpj\n      }))\n    }\n  }]\n}\n\n// Para busca simples de PI, mantém os dados incluindo endereços OOH se existirem\nconst piData = rows[0];\nreturn [{\n  json: {\n    success: true,\n    ...piData\n  }\n}]"
+            },
+            "id": "1affb386-af02-4806-91d8-6f1f6ea2f1e4",
+            "name": "Formatar Resposta",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1776,
+                1596
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}",
+                "options": {}
+            },
+            "id": "f742fa60-cf5e-467f-9108-6882fe25e6fa",
+            "name": "Responder Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1984,
+                1596
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict",
+                        "version": 1
+                    },
+                    "conditions": [
+                        {
+                            "id": "665e3a53-c2be-41ca-89b5-bf7431aa5dbd",
+                            "leftValue": "={{ $json.body?.action || $json.action }}",
+                            "rightValue": "buscar",
+                            "operator": {
+                                "type": "string",
+                                "operation": "contains"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "0e7546c2-e071-4a7d-a8a6-55b2d09c8bb4",
+            "name": "Router Acao",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                560,
+                1740
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "7dc4f378-0288-4c9b-b0b2-48ec0e713837",
+                            "leftValue": "={{ $items('Validar Submissao')[0].json.sanitizedData.is_complement }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "boolean",
+                                "operation": "true",
+                                "singleValue": true
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "56266b4e-738d-4aca-a9a1-455b607a787e",
+            "name": "Check Complemento",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                2336,
+                1820
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "fileFolder",
+                "searchMethod": "query",
+                "queryString": "={{ \"name contains 'PI-\" + $items('Validar Submissao')[0].json.sanitizedData.n_pi.replace(/[^a-zA-Z0-9-_]/g, '') + \"' and '\" + $json.clientFolderId + \"' in parents and trashed=false\" }}",
+                "filter": {},
+                "options": {}
+            },
+            "id": "b48fda6c-c896-49d3-921d-638b4e39f604",
+            "name": "Buscar Pasta Existente",
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                2576,
+                1724
+            ],
+            "alwaysOutputData": true,
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "1c3ApLu5B45cMjkz",
+                    "name": "Google Drive account 2"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "unify-id",
+                            "name": "id",
+                            "value": "={{ $json.id }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "unify-link",
+                            "name": "webViewLink",
+                            "value": "={{ $json.webViewLink }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "674d9b55-f3a2-4c13-a4e5-26736fa4df01",
+            "name": "Dados Pasta PI",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                2800,
+                1820
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook POST": {
+            "main": [
+                [
+                    {
+                        "node": "Parse Request",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook OPTIONS (CORS)": {
+            "main": [
+                [
+                    {
+                        "node": "Respond CORS",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse Request": {
+            "main": [
+                [
+                    {
+                        "node": "Router de Ações",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Router de Ações": {
+            "main": [
+                [
+                    {
+                        "node": "BigQuery - Get Stats",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "BigQuery - Get Pending",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "BigQuery - Approve",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "BigQuery - Get Checking Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Handle Login",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Handle Health",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "BigQuery - Get All Checkings",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "BigQuery - Get All Checkings",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "BigQuery - Register User",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "BigQuery - Get Stats": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Stats",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "BigQuery - Get Pending": {
+            "main": [
+                [
+                    {
+                        "node": "Format Pending Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Format Pending Response": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Pending",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "BigQuery - Approve": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Approve",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "BigQuery - Get Checking Data": {
+            "main": [
+                [
+                    {
+                        "node": "Drive - Search Historico Folder",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Drive - Search Historico Folder": {
+            "main": [
+                [
+                    {
+                        "node": "Check Historico Exists",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Historico Exists": {
+            "main": [
+                [
+                    {
+                        "node": "Set Historico ID",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Drive - Create Historico Folder",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Drive - Create Historico Folder": {
+            "main": [
+                [
+                    {
+                        "node": "Set Historico ID",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Set Historico ID": {
+            "main": [
+                [
+                    {
+                        "node": "Create Observacao File",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Create Observacao File": {
+            "main": [
+                [
+                    {
+                        "node": "Drive - Upload Observacao",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Drive - Upload Observacao": {
+            "main": [
+                [
+                    {
+                        "node": "Check PDF Exists",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check PDF Exists": {
+            "main": [
+                [
+                    {
+                        "node": "Drive - Upload PDF",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Set No PDF",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Drive - Upload PDF": {
+            "main": [
+                [
+                    {
+                        "node": "Set PDF Link",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Set PDF Link": {
+            "main": [
+                [
+                    {
+                        "node": "Merge PDF Paths",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Set No PDF": {
+            "main": [
+                [
+                    {
+                        "node": "Merge PDF Paths",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Merge PDF Paths": {
+            "main": [
+                [
+                    {
+                        "node": "BigQuery - Update Rejection",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "BigQuery - Update Rejection": {
+            "main": [
+                [
+                    {
+                        "node": "Email - Rejection Notification",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Email - Rejection Notification": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Rejection",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Handle Login": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Login",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Handle Health": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Health",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "BigQuery - Get All Checkings": {
+            "main": [
+                [
+                    {
+                        "node": "Respond All Checkings",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "BigQuery - Register User": {
+            "main": [
+                [
+                    {
+                        "node": "BigQuery - Audit Log",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "BigQuery - Audit Log": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Register",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Validar Submissao": {
+            "main": [
+                [
+                    {
+                        "node": "Check Validacao",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Validacao": {
+            "main": [
+                [
+                    {
+                        "node": "Check Metodo Upload",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Responder Erro Validacao",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Metodo Upload": {
+            "main": [
+                [
+                    {
+                        "node": "Preparar Log Link Drive",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Buscar Pasta Cliente",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Preparar Log Link Drive": {
+            "main": [
+                [
+                    {
+                        "node": "Unificar Logs",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Buscar Pasta Cliente": {
+            "main": [
+                [
+                    {
+                        "node": "Pasta Cliente Existe",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Pasta Cliente Existe": {
+            "main": [
+                [
+                    {
+                        "node": "Definir ID Pasta Cliente",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Criar Pasta Cliente",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Criar Pasta Cliente": {
+            "main": [
+                [
+                    {
+                        "node": "Definir ID Pasta Cliente",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Definir ID Pasta Cliente": {
+            "main": [
+                [
+                    {
+                        "node": "Check Complemento",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Criar Pasta PI": {
+            "main": [
+                [
+                    {
+                        "node": "Dados Pasta PI",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Separar Arquivos Binarios": {
+            "main": [
+                [
+                    {
+                        "node": "Check Tem Arquivos",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Tem Arquivos": {
+            "main": [
+                [
+                    {
+                        "node": "Upload Arquivo Drive",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Aguardar Todos Uploads",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Upload Arquivo Drive": {
+            "main": [
+                [
+                    {
+                        "node": "Aguardar Todos Uploads",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Gerar Arquivo Observacao": {
+            "main": [
+                [
+                    {
+                        "node": "Check Tem Observacao",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Tem Observacao": {
+            "main": [
+                [
+                    {
+                        "node": "Upload Observacao Drive",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Aguardar Todos Uploads",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Upload Observacao Drive": {
+            "main": [
+                [
+                    {
+                        "node": "Aguardar Todos Uploads",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Aguardar Todos Uploads": {
+            "main": [
+                [
+                    {
+                        "node": "Preparar Log Binary",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Preparar Log Binary": {
+            "main": [
+                [
+                    {
+                        "node": "Unificar Logs",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Unificar Logs": {
+            "main": [
+                [
+                    {
+                        "node": "Registrar Log BigQuery",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Registrar Log BigQuery": {
+            "main": [
+                [
+                    {
+                        "node": "Email Interno",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Email Fornecedor",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Email Interno": {
+            "main": [
+                [
+                    {
+                        "node": "Responder Sucesso",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Email Fornecedor": {
+            "main": [
+                [
+                    {
+                        "node": "Responder Sucesso",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook Entrada": {
+            "main": [
+                [
+                    {
+                        "node": "Router Acao",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Preparar Query MySQL": {
+            "main": [
+                [
+                    {
+                        "node": "Executar Busca MySQL",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Executar Busca MySQL": {
+            "main": [
+                [
+                    {
+                        "node": "Check Meio OOH",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Meio OOH": {
+            "main": [
+                [
+                    {
+                        "node": "MySQL Buscar Enderecos OOH",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Formatar Resposta",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "MySQL Buscar Enderecos OOH": {
+            "main": [
+                [
+                    {
+                        "node": "Parse Enderecos OOH",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse Enderecos OOH": {
+            "main": [
+                [
+                    {
+                        "node": "Formatar Resposta",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Formatar Resposta": {
+            "main": [
+                [
+                    {
+                        "node": "Responder Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Router Acao": {
+            "main": [
+                [
+                    {
+                        "node": "Preparar Query MySQL",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Validar Submissao",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Complemento": {
+            "main": [
+                [
+                    {
+                        "node": "Buscar Pasta Existente",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Criar Pasta PI",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Buscar Pasta Existente": {
+            "main": [
+                [
+                    {
+                        "node": "Dados Pasta PI",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Dados Pasta PI": {
+            "main": [
+                [
+                    {
+                        "node": "Separar Arquivos Binarios",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Gerar Arquivo Observacao",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {},
+    "meta": {
+        "templateCredsSetupCompleted": true,
+        "instanceId": "6b93d26d78f3422a2df7daf09364ceee25a1cd3223a663b1fe4533d415237602"
+    }
+}
